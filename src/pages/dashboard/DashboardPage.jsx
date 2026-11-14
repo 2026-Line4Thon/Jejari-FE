@@ -18,6 +18,8 @@ const lostItems = [
 ];
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
+
   return (
     <main className="dashboard-page">
       <header className="dashboard-header">
@@ -27,7 +29,7 @@ export default function DashboardPage() {
       <section className="dashboard-content">
         <h2>무엇을 도와드릴까요?</h2>
         <p className="dashboard-description">우리 학교에서 잃어버린 물건을 찾아보세요.</p>
-        <button className="service-card lost-card" type="button">
+        <button className="service-card lost-card" type="button" onClick={() => navigate('/register')}>
           <img src={searchIcon} alt="" /><span><strong>물건을 잃어버렸어요</strong><small>사진이나 설명으로 분실물 등록</small></span><img className="chevron" src={chevronCard} alt="" />
         </button>
         <button className="service-card found-card" type="button">
@@ -49,3 +51,4 @@ export default function DashboardPage() {
     </main>
   );
 }
+import { useNavigate } from 'react-router-dom';
