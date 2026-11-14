@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="171" height="165" viewBox="0 0 171 165" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path id="017 action-card Surface" d="M147.252 0.5H23.7479C10.9084 0.5 0.5 11.2197 0.5 24.4431V140.557C0.5 153.78 10.9084 164.5 23.7479 164.5H147.252C160.092 164.5 170.5 153.78 170.5 140.557V24.4431C170.5 11.2197 160.092 0.5 147.252 0.5Z" fill="url(#paint0_radial_0_35)" stroke="#CDE0EC" stroke-opacity="0.82"/>
+<defs>
+<radialGradient id="paint0_radial_0_35" cx="0" cy="0" r="1" gradientTransform="matrix(-89.6268 112.611 -116.948 -98.7983 109.5 51.5)" gradientUnits="userSpaceOnUse">
+<stop offset="0.144231" stop-color="#EEF7E3"/>
+<stop offset="0.658013" stop-color="#F7FBF4"/>
+<stop offset="0.967049" stop-color="#FDFDFE"/>
+</radialGradient>
+</defs>
+</svg>

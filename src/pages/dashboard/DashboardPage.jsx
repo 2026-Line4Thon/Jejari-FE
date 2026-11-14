@@ -1,54 +1,104 @@
+import { useNavigate } from 'react-router-dom';
 import './DashboardPage.css';
-import bellIcon from '../../assets/icons/bell.svg';
-import searchIcon from '../../assets/icons/search-card.svg';
-import packageIcon from '../../assets/icons/package-plus.svg';
-import chevronCard from '../../assets/icons/chevron-card.svg';
-import chevronCardTwo from '../../assets/icons/chevron-card-2.svg';
-import chevronList from '../../assets/icons/chevron-list.svg';
-import imagePlaceholder from '../../assets/icons/image-placeholder.svg';
-import navHome from '../../assets/icons/nav-home.svg';
-import navSearch from '../../assets/icons/nav-search.svg';
-import navAdd from '../../assets/icons/nav-add.svg';
-import navBell from '../../assets/icons/nav-bell.svg';
-import navUser from '../../assets/icons/nav-user.svg';
+import background from '../../assets/dashboard-new/background.svg';
+import headerSurface from '../../assets/dashboard-new/header.svg';
+import logo from '../../assets/dashboard-new/logo.svg';
+import bell from '../../assets/dashboard-new/bell.svg';
+import lostCard from '../../assets/dashboard-new/lost-card.svg';
+import foundCard from '../../assets/dashboard-new/found-card.svg';
+import actionIcon from '../../assets/dashboard-new/action-icon.svg';
+import lostIcon from '../../assets/dashboard-new/lost-icon.svg';
+import foundIcon from '../../assets/dashboard-new/found-icon.svg';
+import arrow from '../../assets/dashboard-new/arrow.svg';
+import statusCard from '../../assets/dashboard-new/status-card.svg';
+import pulse from '../../assets/dashboard-new/pulse.svg';
+import count from '../../assets/dashboard-new/count.svg';
+import placeholder from '../../assets/dashboard-new/placeholder.svg';
+import badge from '../../assets/dashboard-new/badge.svg';
+import badgeIcon from '../../assets/dashboard-new/badge-icon.svg';
+import safety from '../../assets/dashboard-new/safety.svg';
+import safetyIcon from '../../assets/dashboard-new/safety-icon.svg';
+import navSurface from '../../assets/dashboard-new/nav.svg';
+import navLost from '../../assets/dashboard-new/nav-lost.svg';
+import navFound from '../../assets/dashboard-new/nav-found.svg';
+import navHome from '../../assets/dashboard-new/nav-home.svg';
+import navMy from '../../assets/dashboard-new/nav-my.svg';
+import photoOne from '../../assets/dashboard-new/photo-1.png';
+import photoTwo from '../../assets/dashboard-new/photo-2.png';
+import photoThree from '../../assets/dashboard-new/photo-3.png';
 
-const lostItems = [
-  { status: '새 습득물', name: '검정 무선 이어폰 케이스', detail: '중앙도서관 2층 · 11.02 14:30', fresh: true },
-  { status: '보관 중', name: '회색 접이식 우산', detail: '학생회관 1층 · 11.02 12:10', fresh: false },
+const items = [
+  { name: '텀블러', place: '중앙도서관 1층', image: photoOne },
+  { name: '카드지갑', place: '학생회관 2층', image: photoTwo, private: true },
+  { name: '카키색 우산', place: '공학관 A동', image: photoThree },
 ];
 
 export default function DashboardPage() {
   const navigate = useNavigate();
 
   return (
-    <main className="dashboard-page">
-      <header className="dashboard-header">
-        <h1>캠퍼스 찾음</h1>
-        <img src={bellIcon} alt="알림" />
+    <main className="new-dashboard-page" aria-label="홈">
+      <img className="dashboard-background" src={background} alt="" />
+      <header className="new-dashboard-header">
+        <img className="header-surface" src={headerSurface} alt="" />
+        <img className="dashboard-logo" src={logo} alt="제자리" />
+        <button type="button" aria-label="알림"><img src={bell} alt="" /></button>
       </header>
-      <section className="dashboard-content">
-        <h2>무엇을 도와드릴까요?</h2>
-        <p className="dashboard-description">우리 학교에서 잃어버린 물건을 찾아보세요.</p>
-        <button className="service-card lost-card" type="button" onClick={() => navigate('/register')}>
-          <img src={searchIcon} alt="" /><span><strong>물건을 잃어버렸어요</strong><small>사진이나 설명으로 분실물 등록</small></span><img className="chevron" src={chevronCard} alt="" />
-        </button>
-        <button className="service-card found-card" type="button">
-          <img src={packageIcon} alt="" /><span><strong>물건을 주웠어요</strong><small>사진을 올리고 주인과 연결</small></span><img className="chevron" src={chevronCardTwo} alt="" />
-        </button>
-        <div className="recent-title"><h3>최근 습득물</h3><button type="button">전체 보기</button></div>
-        {lostItems.map((item) => (
-          <article className="lost-item" key={item.name}>
-            <div className="lost-thumbnail"><img src={imagePlaceholder} alt="" /></div>
-            <div><span className={item.fresh ? 'fresh-badge' : 'stored-badge'}>{item.status}</span><strong>{item.name}</strong><small>{item.detail}</small></div>
-            <img className="list-chevron" src={chevronList} alt="" />
-          </article>
-        ))}
-        <article className="summary-card"><div><strong>내 분실물 1건</strong><span>후보 2건</span></div><p>검정 무선 이어폰 케이스 · 매칭 확인하기 ›</p></article>
+
+      <section className="dashboard-main-content">
+        <p className="dashboard-greeting">안녕하세요, 멋사님</p>
+        <h1>무엇을 도와드릴까요?</h1>
+
+        <div className="quick-actions">
+          <button className="quick-action lost-action" type="button" onClick={() => navigate('/register')}>
+            <img className="action-card-surface" src={lostCard} alt="" />
+            <img className="action-icon-surface" src={actionIcon} alt="" />
+            <img className="action-symbol" src={lostIcon} alt="" />
+            <strong>물건을<br />잃어버렸어요</strong><small>사진 또는 설명으로 찾기</small><img className="action-arrow" src={arrow} alt="" />
+          </button>
+          <button className="quick-action found-action" type="button">
+            <img className="action-card-surface" src={foundCard} alt="" />
+            <img className="action-icon-surface" src={actionIcon} alt="" />
+            <img className="action-symbol" src={foundIcon} alt="" />
+            <strong>물건을<br />주웠어요</strong><small>사진으로 빠르게 등록하기</small><img className="action-arrow" src={arrow} alt="" />
+          </button>
+        </div>
+
+        <article className="matching-status">
+          <img className="status-surface" src={statusCard} alt="" />
+          <div className="status-copy">
+            <div><img className="status-pulse" src={pulse} alt="" /><strong>내 매칭 현황</strong></div>
+            <p>무선 이어폰 · 후보 3개 발견</p>
+          </div>
+          <img className="match-count" src={count} alt="" /><b>3건</b>
+        </article>
+
+        <section className="recent-items" aria-labelledby="recent-title">
+          <div className="recent-heading"><h2 id="recent-title">최근 등록된 분실물</h2><button type="button" onClick={() => navigate('/find')}>전체보기</button></div>
+          <div className="item-grid">
+            {items.map((item) => (
+              <article className="recent-item" key={item.name}>
+                <div className="recent-photo">
+                  <img className="placeholder" src={placeholder} alt="" />
+                  <img className={item.private ? 'item-photo is-private' : 'item-photo'} src={item.image} alt="" />
+                  {item.private && <span className="privacy-badge"><img src={badge} alt="" /><em>민감정보 블러</em><img src={badgeIcon} alt="" /></span>}
+                </div>
+                <strong>{item.name}</strong><small>{item.place}</small>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <aside className="dashboard-safety"><img className="safety-surface" src={safety} alt="" /><img className="safety-icon" src={safetyIcon} alt="" /><strong>안심하고 이용하세요</strong><p>연락처 공개 없이 앱 안에서 반환할 수 있어요.</p></aside>
       </section>
-      <nav className="bottom-navigation" aria-label="주 메뉴">
-        <a className="active" href="/home"><img src={navHome} alt="" />홈</a><a href="/find"><img src={navSearch} alt="" />분실물 찾기</a><a href="/register"><img src={navAdd} alt="" />등록하기</a><a href="/notify"><img src={navBell} alt="" />알림</a><a href="/mypage"><img src={navUser} alt="" />마이페이지</a>
+
+      <nav className="new-bottom-navigation" aria-label="주 메뉴">
+        <img className="nav-surface" src={navSurface} alt="" />
+        <a href="/register"><img src={navLost} alt="" /><span>잃어버렸어요</span></a>
+        <a href="/register"><img src={navFound} alt="" /><span>주웠어요</span></a>
+        <a className="active" href="/home"><img src={navHome} alt="" /><span>홈</span></a>
+        <a href="/mypage"><img src={navMy} alt="" /><span>마이</span></a>
       </nav>
     </main>
   );
 }
-import { useNavigate } from 'react-router-dom';

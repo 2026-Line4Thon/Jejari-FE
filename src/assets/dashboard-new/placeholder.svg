@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="110" height="80" viewBox="0 0 110 80" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="038 photo-placeholder Surface">
+<use xlink:href="#stroke0_0_34" fill="url(#paint0_linear_0_34)" fill-opacity="0.4"/>
+<mask id="stroke1_0_34" fill="white">
+<use xlink:href="#stroke0_0_34"/>
+</mask>
+<path d="M12.4717 0H97.5284C104.416 0 110 5.8203 110 13V67C110 74.1797 104.416 80 97.5284 80H12.4717C5.58375 80 0 74.1797 0 67V13C0 5.8203 5.58375 0 12.4717 0Z" stroke-width="2" stroke="#CDE0EC" stroke-opacity="0.86" mask="url(#stroke1_0_34)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_34" x1="55" y1="0" x2="55" y2="80" gradientUnits="userSpaceOnUse">
+<stop offset="0.37" stop-color="#8B8A93"/>
+<stop offset="0.83"/>
+</linearGradient>
+<path id="stroke0_0_34" d="M97.5284 0H12.4717C5.58375 0 0 5.8203 0 13V67C0 74.1797 5.58375 80 12.4717 80H97.5284C104.416 80 110 74.1797 110 67V13C110 5.8203 104.416 0 97.5284 0Z"/>
+</defs>
+</svg>

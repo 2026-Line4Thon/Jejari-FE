@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="390" height="844" viewBox="0 0 390 844" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path id="001 splash-screen Surface" d="M390 0H0V844H390V0Z" fill="url(#paint0_linear_0_6)"/>
+<defs>
+<linearGradient id="paint0_linear_0_6" x1="8.99999" y1="5.32115e-06" x2="386.87" y2="815.033" gradientUnits="userSpaceOnUse">
+<stop offset="0.115797" stop-color="#C9E3F4"/>
+<stop offset="0.552984" stop-color="#EDF8FE"/>
+<stop offset="0.810693" stop-color="#F8FCFF"/>
+</linearGradient>
+</defs>
+</svg>
