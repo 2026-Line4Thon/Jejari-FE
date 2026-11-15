@@ -14,6 +14,9 @@ import DashboardPage from './pages/dashboard/DashboardPage';
 import LostItemFormPage from './pages/lost-item/LostItemFormPage';
 import AiFeaturePage from './pages/ai-feature/AiFeaturePage';
 import RegistrationCompletePage from './pages/complete/RegistrationCompletePage';
+import ReturnHistoryPage from './pages/return-history/ReturnHistoryPage';
+import NotificationSettingsPage from './pages/notification-settings/NotificationSettingsPage';
+import PrivacySecurityPage from './pages/privacy-security/PrivacySecurityPage';
 import SplashPage from './pages/splash/SplashPage';
 
 function App() {
@@ -31,6 +34,9 @@ function App() {
         <Route path="/lost-item" element={<LostItemFormPage />} />
         <Route path="/ai-feature" element={<AiFeaturePage />} />
         <Route path="/complete" element={<RegistrationCompletePage />} />
+        <Route path="/return-history" element={<ReturnHistoryPage />} />
+        <Route path="/notification-settings" element={<NotificationSettingsPage />} />
+        <Route path="/privacy-security" element={<PrivacySecurityPage />} />
         <Route path="*" element={<SplashPage />} />
       </Routes>
     </BrowserRouter>

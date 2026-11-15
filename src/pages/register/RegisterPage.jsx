@@ -9,12 +9,11 @@ import recommend from '../../assets/lost-method/recommend.svg';
 import iconSurface from '../../assets/lost-method/icon-surface.svg';
 import photoIcon from '../../assets/lost-method/photo-icon.svg';
 import textIcon from '../../assets/lost-method/text-icon.svg';
-import navLost from '../../assets/lost-method/nav-lost.svg';
 import backSurface from '../../assets/recent-found/back.svg';
 import backArrow from '../../assets/recent-found/back-arrow.svg';
-import navFound from '../../assets/dashboard-new/nav-found.svg';
-import navHome from '../../assets/dashboard-new/nav-home.svg';
-import navMy from '../../assets/dashboard-new/nav-my.svg';
+import navHome from '../../assets/home-nav/home-active.svg';
+import navChat from '../../assets/home-nav/chat.svg';
+import navMy from '../../assets/home-nav/my.svg';
 import navSurface from '../../assets/dashboard-new/nav.svg';
 import chevron from '../../assets/dashboard-new/arrow.svg';
 
@@ -38,9 +37,8 @@ export default function RegisterPage() {
       </section>
       <nav className="lost-method-navigation" aria-label="주 메뉴">
         <img className="lost-method-nav-surface" src={navSurface} alt="" />
-        <Link className="active" to="/register"><img src={navLost} alt="" /><span>잃어버렸어요</span></Link>
-        <Link to="/find"><img src={navFound} alt="" /><span>주웠어요</span></Link>
         <Link className="lost-method-home-nav" to="/home"><img src={navHome} alt="" /><span>홈</span></Link>
+        <Link to="/notify"><img src={navChat} alt="" /><span>채팅</span></Link>
         <Link to="/mypage"><img src={navMy} alt="" /><span>마이</span></Link>
       </nav>
     </main>
