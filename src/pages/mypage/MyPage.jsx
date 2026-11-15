@@ -1,3 +1,11 @@
-export default function MyPage() {
-  return <h1>마이페이지입니다</h1>;
-}
+import { useNavigate } from 'react-router-dom';
+import './MyPage.css';
+import background from '../../assets/lost-form-new/background.svg';
+import backSurface from '../../assets/recent-found/back.svg';
+import backArrow from '../../assets/recent-found/back-arrow.svg';
+import photo from '../../assets/photo-result/raw-image-1.png';
+import profileSurface from '../../assets/mypage/profile-surface.svg';
+import profileIcon from '../../assets/mypage/profile-icon.svg';
+import schoolBadge from '../../assets/mypage/school-badge.svg';
+import schoolShield from '../../assets/mypage/school-shield.svg';
+export default function MyPage(){const navigate=useNavigate();return <main className="my-page"><img src={background} alt=""/><header><button onClick={()=>navigate(-1)}><img src={backSurface} alt=""/><img src={backArrow} alt=""/></button><h1>마이페이지</h1></header><section><article className="my-profile"><i><img src={profileSurface} alt=""/><img src={profileIcon} alt="프로필"/></i><div><strong>김멋사</strong><span>minji@univ.ac.kr</span><em><img src={schoolBadge} alt=""/><b><img src={schoolShield} alt=""/>학교 인증 완료</b></em></div></article><article className="my-stats"><div><b>2</b><span>분실물</span></div><div><b>1</b><span>습득물</span></div><div><b>3</b><span>반환 완료</span></div></article><h2>진행 중인 등록</h2><article className="my-item"><span><img src={photo} alt="무선 이어폰"/></span><div><em className="candidate">후보 3건</em><strong>무선 이어폰</strong><small>분실 · 중앙도서관</small></div><b>›</b></article><article className="my-item"><span><img src={photo} alt="무선 이어폰"/></span><div><em className="returning">반환 협의 중</em><strong>보조 배터리</strong><small>습득 · 학생회관</small></div><b>›</b></article><nav className="my-menu"><button onClick={()=>navigate('/return-history')}><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></i>반환 완료 내역 <b>›</b></button><button onClick={()=>navigate('/notification-settings')}><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></i>알림 설정 <b>›</b></button><button onClick={()=>navigate('/privacy-security')}><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.7-3 8.2-7 10-4-1.8-7-5.3-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></i>개인정보 및 보안 <b>›</b></button><button className="logout">로그아웃</button></nav></section></main>}

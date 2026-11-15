@@ -14,10 +14,9 @@ import privacyBadge from '../../assets/recent-found/privacy-badge.svg';
 import privacyIcon from '../../assets/recent-found/privacy-icon.svg';
 import arrow from '../../assets/dashboard-new/arrow.svg';
 import navSurface from '../../assets/dashboard-new/nav.svg';
-import navLost from '../../assets/dashboard-new/nav-lost.svg';
-import navFound from '../../assets/dashboard-new/nav-found.svg';
-import navHome from '../../assets/dashboard-new/nav-home.svg';
-import navMy from '../../assets/dashboard-new/nav-my.svg';
+import navHome from '../../assets/home-nav/home-active.svg';
+import navChat from '../../assets/home-nav/chat.svg';
+import navMy from '../../assets/home-nav/my.svg';
 import photoOne from '../../assets/dashboard-new/photo-1.png';
 import photoTwo from '../../assets/dashboard-new/photo-2.png';
 import photoThree from '../../assets/dashboard-new/photo-3.png';
@@ -52,7 +51,7 @@ export default function FindPage() {
           ))}
         </div>
       </section>
-      <nav className="recent-found-nav" aria-label="주 메뉴"><img className="recent-found-nav-surface" src={navSurface} alt="" /><a href="/register"><img src={navLost} alt="" /><span>잃어버렸어요</span></a><a href="/register"><img src={navFound} alt="" /><span>주웠어요</span></a><a className="active" href="/home"><img src={navHome} alt="" /><span>홈</span></a><a href="/mypage"><img src={navMy} alt="" /><span>마이</span></a></nav>
+      <nav className="recent-found-nav" aria-label="주 메뉴"><img className="recent-found-nav-surface" src={navSurface} alt="" /><a href="/home"><img src={navHome} alt="" /><span>홈</span></a><a href="/notify"><img src={navChat} alt="" /><span>채팅</span></a><a href="/mypage"><img src={navMy} alt="" /><span>마이</span></a></nav>
     </main>
   );
 }
