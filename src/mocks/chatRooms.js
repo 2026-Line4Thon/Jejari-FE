@@ -20,7 +20,7 @@ export function createMockChatRooms() {
       mockScenario: 'earbuds-return',
     },
     {
-      id: 'room-power-bank', status: 'active', unread: false,
+      id: 'room-power-bank', itemId: 201, status: 'active', unread: false,
       updatedLabel: '3월 14일', dateLabel: '3월 14일 금요일',
       item: { name: '보조 배터리', place: '학생회관', dateLabel: '3월 14일', photo: { source: chatAssets.powerBank, variant: 'power-bank' } },
       messages: [{ id: 'system-1', sender: 'system', text: '비공개 채팅이 시작됐어요.' }],

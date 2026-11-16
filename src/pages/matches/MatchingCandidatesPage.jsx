@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useMatchCandidates } from '../../hooks/useMatchingFlow';
 import { MatchingLayout, MatchingLoadState, MatchingCandidateCard } from '../../components/matching-flow/MatchingLayout';
 import { matchingAssets } from '../../components/matching-flow/matchingAssets';
@@ -14,8 +14,10 @@ export function MatchingCandidatesView({ data, onBack }) {
 
 export default function MatchingCandidatesPage() {
   const navigate = useNavigate();
-  const { data, error, isLoading } = useMatchCandidates();
-  const onBack = () => navigate('/complete');
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const { data, error, isLoading } = useMatchCandidates(searchParams.get('itemId') ?? 101);
+  const onBack = () => navigate(location.state?.returnTo === '/mypage' ? '/mypage' : '/complete');
   if (isLoading || error) return <MatchingLoadState title="매칭 완료" error={error} onBack={onBack} />;
   return <MatchingCandidatesView data={data} onBack={onBack} />;
 }
