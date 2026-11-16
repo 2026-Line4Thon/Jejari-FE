@@ -14,11 +14,14 @@ export function FoundItemHeader({ onBack, titleId }) {
   );
 }
 
-export function FoundItemProgress() {
+export function FoundItemProgress({ step = 1 }) {
+  const totalSteps = 2;
+  const label = step === 2 ? '분석 결과 확인' : '기본 정보 입력';
+
   return (
     <>
-      <div className="found-item-step"><span>기본 정보 입력</span><strong>1 / 2</strong></div>
-      <div className="found-item-progress" role="progressbar" aria-label="습득물 등록 진행 단계" aria-valuemin={0} aria-valuemax={2} aria-valuenow={1} />
+      <div className="found-item-step"><span>{label}</span><strong>{step} / {totalSteps}</strong></div>
+      <div className="found-item-progress" style={{ '--found-item-progress-width': `${(step / totalSteps) * 100}%` }} role="progressbar" aria-label="습득물 등록 진행 단계" aria-valuemin={0} aria-valuemax={totalSteps} aria-valuenow={step} />
     </>
   );
 }

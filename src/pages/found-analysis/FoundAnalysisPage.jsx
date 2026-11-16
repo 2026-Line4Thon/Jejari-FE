@@ -64,7 +64,7 @@ export default function FoundAnalysisPage() {
   return (
     <main className="found-item-page found-analysis-page" aria-labelledby="found-analysis-title">
       <FoundItemHeader titleId="found-analysis-title" onBack={() => navigate(item.foundDraft ? '/found-item' : '/home', { state: { foundDraft: item.foundDraft } })} />
-      <FoundItemProgress />
+      <FoundItemProgress step={2} />
 
       <section className="found-analysis-intro" aria-labelledby="found-analysis-result">
         <h2 id="found-analysis-result">Jejari 이미지 분석 결과</h2>
