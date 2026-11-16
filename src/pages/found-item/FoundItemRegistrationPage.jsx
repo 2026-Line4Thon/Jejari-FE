@@ -4,6 +4,7 @@ import { FoundItemHeader, FoundItemProgress } from '../../components/found-item/
 import FoundItemPhoto from '../../components/found-item/FoundItemPhoto';
 import PhotoPicker from '../../components/found-item/PhotoPicker';
 import useFoundPhotos from '../../hooks/useFoundPhotos';
+import { openInputPicker } from '../../utils/openInputPicker';
 import uploadIcon from '../../assets/found-registration/upload-icon.svg';
 import './FoundItemRegistrationPage.css';
 
@@ -45,7 +46,8 @@ export default function FoundItemRegistrationPage() {
       return;
     }
     const orderedPhotos = [cover, ...photos.filter((_, index) => index !== coverIndex)];
-    const foundDraft = { ...draft, place: draft.place.trim(), description: draft.description.trim(), photos: orderedPhotos };
+    const fields = Object.fromEntries(new FormData(event.currentTarget));
+    const foundDraft = { ...draft, ...fields, place: fields.place.trim(), description: fields.description.trim(), photos: orderedPhotos };
     window.scrollTo(0, 0);
     navigate('/found-analyzing', { state: { foundDraft } });
   };
@@ -67,8 +69,8 @@ export default function FoundItemRegistrationPage() {
         </div>
         <label className="found-registration-field found-registration-place"><span>습득 장소</span><input name="place" value={draft.place} onChange={updateField} required pattern=".*\S.*" title="습득 장소를 입력해 주세요." autoComplete="off" /></label>
         <div className="found-registration-field-row">
-          <label className="found-registration-field"><span>습득 날짜</span><input className={draft.date ? 'has-value' : ''} type="date" name="date" value={draft.date} onChange={updateField} required /></label>
-          <label className="found-registration-field"><span>시간 <em>선택</em></span><input className={draft.time ? 'has-value' : ''} type="time" name="time" value={draft.time} onChange={updateField} /></label>
+          <label className="found-registration-field"><span>습득 날짜</span><input className={draft.date ? 'has-value' : ''} type="date" name="date" value={draft.date} onInput={updateField} onChange={updateField} onClick={openInputPicker} required /></label>
+          <label className="found-registration-field"><span>시간 <em>선택</em></span><input className={draft.time ? 'has-value' : ''} type="time" name="time" value={draft.time} onInput={updateField} onChange={updateField} onClick={openInputPicker} /></label>
         </div>
         <label className="found-registration-field found-registration-description"><span>특징 및 상세 설명 <em>선택</em></span><textarea name="description" value={draft.description} onChange={updateField} placeholder="발견 당시 상태나 보관 장소를 적어 주세요." /></label>
         <div className="found-registration-submit-wrap"><button className="found-registration-submit" type="submit" disabled={isReading}>다음 · AI와 특징 정리하기</button></div>
