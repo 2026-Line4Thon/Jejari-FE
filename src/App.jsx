@@ -27,6 +27,10 @@ import MatchingCandidateDetailPage from './pages/matches/MatchingCandidateDetail
 import OwnershipCheckPage from './pages/ownership/OwnershipCheckPage';
 import ReturnConnectionPage from './pages/return-connection/ReturnConnectionPage';
 
+import ChatListPage from './pages/chats/ChatListPage';
+import ChatRoomPage from './pages/chats/ChatRoomPage';
+import ChatReturnCompletePage from './pages/chats/ChatReturnCompletePage';
+
 function App() {
   return (
     <BrowserRouter>
@@ -44,6 +48,9 @@ function App() {
         <Route path="/found-item" element={<FoundItemRegistrationPage />} />
         <Route path="/found-analyzing" element={<FoundAnalyzingPage />} />
         <Route path="/found-complete" element={<FoundRegistrationCompletePage />} />
+        <Route path="/chats" element={<ChatListPage />} />
+        <Route path="/chats/:roomId" element={<ChatRoomPage />} />
+        <Route path="/chats/:roomId/complete" element={<ChatReturnCompletePage />} />
         <Route path="/matches" element={<MatchingCandidatesPage />} />
         <Route path="/matches/:candidateId" element={<MatchingCandidateDetailPage />} />
         <Route path="/matches/:candidateId/ownership" element={<OwnershipCheckPage />} />

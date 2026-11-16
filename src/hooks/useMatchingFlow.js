@@ -61,17 +61,8 @@ export function useReturnConnection(candidateId, checkId) {
   const load = useCallback(() => matchingService.getReturnConnection(candidateId, checkId), [candidateId, checkId]);
   const resource = useMatchingResource(load);
   const action = useMatchingAction();
-  const [room, setRoom] = useState(null);
-  const [message, setMessage] = useState('');
-  const startChat = async () => {
-    const nextRoom = await action.run(() => matchingService.createChat(candidateId, checkId));
-    if (nextRoom) setRoom(nextRoom);
-    return nextRoom;
+  return {
+    ...resource, isPending: action.isPending, actionError: action.error,
+    startChat: () => action.run(() => matchingService.createChat(candidateId, checkId)),
   };
-  const sendMessage = async () => {
-    if (!room) return;
-    const nextRoom = await action.run(() => matchingService.sendMessage(room.id, message));
-    if (nextRoom) { setRoom(nextRoom); setMessage(''); }
-  };
-  return { ...resource, room, message, setMessage, startChat, sendMessage, isPending: action.isPending, actionError: action.error };
 }

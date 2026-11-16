@@ -1,8 +1,8 @@
+import { chatService } from './chatService';
 import { mockLostItem, mockMatchingCandidates, createMockOwnershipCheck } from '../mocks/matchingItems';
 
 const rejected = new Set();
 const checks = new Map();
-const rooms = new Map();
 const clone = (value) => structuredClone(value);
 
 function candidateById(id) {
@@ -63,20 +63,13 @@ export const matchingService = {
     if (check.candidateId !== candidate.id || check.status === 'pending') throw new Error('소유권 확인 화면에서 반환 연결을 진행해 주세요.');
     return clone({ candidate, verification: check });
   },
-  // POST /chats
+  // POST /chats: ownership validation remains in this flow.
   async createChat(candidateId, checkId) {
     const connection = await this.getReturnConnection(candidateId, checkId);
-    const id = 'room-' + connection.candidate.id;
-    if (!rooms.has(id)) rooms.set(id, { id, candidateId: connection.candidate.id, messages: [{ id: 'system-1', sender: 'system', text: '비공개 채팅이 시작됐어요.' }] });
-    return clone(rooms.get(id));
+    return chatService.createChat(connection.candidate);
   },
-  // POST /chats/:chatId/messages
+  // Kept as a forwarding boundary for existing matching consumers.
   async sendMessage(roomId, text) {
-    const room = rooms.get(roomId);
-    if (!room) throw new Error('채팅을 먼저 시작해 주세요.');
-    const trimmed = text.trim();
-    if (!trimmed) throw new Error('메시지를 입력해 주세요.');
-    room.messages.push({ id: 'message-' + room.messages.length, sender: 'me', text: trimmed });
-    return clone(room);
+    return chatService.sendMessage(roomId, text);
   },
 };
