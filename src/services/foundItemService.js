@@ -1,4 +1,5 @@
-import { createMockFoundAnalysis, createMockFoundPhotos } from '../mocks/foundItems';
+import { createMockFoundAnalysis, createMockFoundMatching } from '../mocks/foundItems';
+import { createLocalFoundPhotos } from './foundPhotoStore';
 
 function waitForAnalysis(signal) {
   return new Promise((resolve, reject) => {
@@ -18,14 +19,17 @@ function waitForAnalysis(signal) {
   });
 }
 
-// Replace these mock responses with FE API calls when the endpoints are available.
+// Analysis and matching use mock responses until FE API endpoints are available.
 export const foundItemService = {
-  async selectPhotos(origin) {
-    return createMockFoundPhotos(origin);
+  async selectPhotos(origin, files) {
+    return createLocalFoundPhotos(files, origin);
   },
   async analyze(foundDraft, { signal } = {}) {
     if (!foundDraft?.photos?.length) throw new Error('분석할 사진을 먼저 선택해 주세요.');
     await waitForAnalysis(signal);
-    return createMockFoundAnalysis();
+    return { ...createMockFoundAnalysis(), privacyProtected: foundDraft.photos[0].privacyProtected === true };
+  },
+  async getMatchingResults() {
+    return createMockFoundMatching();
   },
 };

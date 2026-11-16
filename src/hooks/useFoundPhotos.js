@@ -7,11 +7,12 @@ export default function useFoundPhotos(initialPhotos = []) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const selectPhotos = async (origin) => {
+  const selectPhotos = async (origin, files) => {
+    if (!files?.length) return null;
     setIsLoading(true);
     setError('');
     try {
-      const selected = await foundItemService.selectPhotos(origin);
+      const selected = await foundItemService.selectPhotos(origin, files);
       if (!selected?.length) return null;
       if (selected.length > 3) throw new Error('사진은 최대 3장까지 등록할 수 있어요.');
       setPhotos(selected);

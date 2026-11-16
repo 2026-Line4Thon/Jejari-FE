@@ -18,8 +18,9 @@
 .found-item-header h1 { margin: 0; font-size: 18px; font-weight: 700; line-height: 24px; }
 .found-item-header button { position: absolute; left: 0; display: grid; width: 39px; height: 39px; padding: 0; place-items: center; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
 .found-item-header img { display: block; }
-.found-item-header button img:first-child { position: absolute; inset: 0; }
-.found-item-header button img:last-child { position: relative; }
+.found-item-back img:first-child { position: absolute; inset: 0; }
+.found-item-back img:last-child { position: relative; }
+.found-item-header .found-item-close { right: 0; left: auto; }
 .found-item-step { display: flex; justify-content: space-between; margin-top: 29px; color: #64788a; font-size: 11px; line-height: 13px; }
 .found-item-step strong { padding-right: 2px; color: #0766ad; font-weight: 700; }
 .found-item-progress { height: 3px; flex-shrink: 0; margin-top: 12px; background: url('../../assets/found-analysis/progress-active.svg') left top / var(--found-item-progress-width, 50%) 3px no-repeat, url('../../assets/found-analysis/progress.svg') left top / 100% 3px no-repeat; }

@@ -35,14 +35,17 @@ export default function FoundAnalysisPage() {
   });
   const { error: photoError, isLoading: isReadingPhoto, selectPhotos } = useFoundPhotos();
   const privateInput = useRef(null);
+  const photoInput = useRef(null);
 
   const updateField = (event) => {
     const { name, value } = event.target;
     setItem((current) => ({ ...current, [name]: value }));
   };
 
-  const changePhoto = async () => {
-    const photos = await selectPhotos('gallery');
+  const changePhoto = async (event) => {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = '';
+    const photos = await selectPhotos('gallery', files);
     if (!photos) return;
     const photo = photos[0];
     setItem((current) => ({
@@ -58,7 +61,7 @@ export default function FoundAnalysisPage() {
       foundItem[name] = foundItem[name].trim();
     }
     window.scrollTo(0, 0);
-    navigate('/complete', { state: { foundItem } });
+    navigate('/found-complete', { state: { foundItem } });
   };
 
   return (
@@ -74,7 +77,8 @@ export default function FoundAnalysisPage() {
       <form className="found-analysis-form" onSubmit={registerItem}>
         <div className="found-analysis-photo-field">
           <span className="found-analysis-label">사진</span>
-          <FoundItemPhoto variant="analysis" source={item.photo} name={item.photoChanged ? '선택한 습득물 사진' : '검정색 무선 이어폰'} isSample={!item.photoChanged} privacyProtected={item.privacyProtected} onChange={changePhoto} disabled={isReadingPhoto} />
+          <FoundItemPhoto variant="analysis" source={item.photo} name={item.photoChanged ? '선택한 습득물 사진' : '검정색 무선 이어폰'} isSample={!item.photoChanged} privacyProtected={item.privacyProtected} onChange={() => photoInput.current?.click()} disabled={isReadingPhoto} />
+          <input ref={photoInput} type="file" accept="image/*" hidden aria-label="습득물 사진 변경" onChange={changePhoto} disabled={isReadingPhoto} />
           {photoError && <p className="found-analysis-photo-error" role="alert">{photoError}</p>}
         </div>
 
