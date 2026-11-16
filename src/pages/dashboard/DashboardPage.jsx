@@ -94,7 +94,7 @@ export default function DashboardPage() {
       <nav className="new-bottom-navigation" aria-label="주 메뉴">
         <img className="nav-surface" src={navSurface} alt="" />
         <a className="active" href="/home"><img src={navHome} alt="" /><span>홈</span></a>
-        <button type="button" aria-label="채팅"><img src={navChat} alt="" /><span>채팅</span></button>
+        <button type="button" aria-label="채팅" onClick={() => navigate('/chats')}><img src={navChat} alt="" /><span>채팅</span></button>
         <a href="/mypage"><img src={navMy} alt="" /><span>마이</span></a>
       </nav>
     </main>
