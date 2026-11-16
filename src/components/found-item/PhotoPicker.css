@@ -1,0 +1,11 @@
+.found-photo-picker { position: fixed; inset: auto auto 0 50%; width: min(390px, 100vw); max-width: none; max-height: calc(100dvh - 24px); margin: 0; padding: 17px 20px max(16px, env(safe-area-inset-bottom)); overflow-y: auto; transform: translateX(-50%); border: 0; border-radius: 30px 30px 0 0; background: #f7fbff; color: #10283b; font-family: 'Pretendard Variable', sans-serif; }
+.found-photo-picker::backdrop { background: url('../../assets/found-registration/picker-dim.svg') center / 100% 100% no-repeat; }
+.found-photo-picker h2 { margin: 0 48px 0 8px; font-size: 21px; font-weight: 700; line-height: 25px; }
+.found-photo-picker p { margin: 6px 0 0 8px; color: #64788a; font-size: 12px; line-height: 15px; }
+.found-photo-picker-close { position: absolute; top: 11px; right: 20px; width: 39px; height: 39px; padding: 0; border: 0; border-radius: 50%; background: transparent; }
+.found-photo-picker-close img { display: block; }
+.found-photo-picker-actions { display: flex; flex-direction: column; gap: 14px; margin-top: 7px; }
+.found-photo-picker-actions button { width: 100%; height: 55px; flex-shrink: 0; padding: 0 8px; border: 0; border-radius: 16px; color: #10283b; font-family: inherit; font-size: 16px; font-weight: 700; }
+.found-photo-picker-camera { background: url('../../assets/found-registration/picker-camera.svg') center / 100% 55px no-repeat; }
+.found-photo-picker-gallery { background: url('../../assets/found-registration/picker-gallery.svg') center / 100% 55px no-repeat; color: #000 !important; }
+.found-photo-picker button { cursor: pointer; }

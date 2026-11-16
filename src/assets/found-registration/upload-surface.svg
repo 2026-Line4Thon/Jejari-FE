@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="351" height="101" viewBox="0 0 351 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path id="016 upload-box Surface" d="M333.097 0.5H17.9033C8.29173 0.5 0.5 7.21573 0.5 15.5V85.5C0.5 93.7843 8.29173 100.5 17.9033 100.5H333.097C342.708 100.5 350.5 93.7843 350.5 85.5V15.5C350.5 7.21573 342.708 0.5 333.097 0.5Z" fill="url(#paint0_linear_0_5)" stroke="#C9C7D0"/>
+<defs>
+<linearGradient id="paint0_linear_0_5" x1="175.5" y1="100.5" x2="175.5" y2="0.500002" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.2"/>
+<stop offset="1" stop-color="#8B8A93" stop-opacity="0.2"/>
+</linearGradient>
+</defs>
+</svg>

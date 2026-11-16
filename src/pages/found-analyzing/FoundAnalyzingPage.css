@@ -1,0 +1,17 @@
+.found-analyzing-page { position: relative; min-height: max(790px, 100dvh); overflow: hidden; isolation: isolate; background-image: url('../../assets/found-registration/analysis-background.svg'); }
+.found-analyzing-art { position: relative; height: 300px; margin: 29px -20px 0; }
+.found-analyzing-art img { position: absolute; display: block; max-width: none; }
+.found-analyzing-outer-glow { top: -25px; left: calc(50% - 190px); }
+.found-analyzing-inner-glow { top: 41px; left: calc(50% - 122px); }
+.found-analyzing-logo { top: 131px; left: calc(50% - 32px); }
+.found-analyzing-copy { position: relative; margin-top: 31px; text-align: center; }
+.found-analyzing-dots { display: flex; height: 9px; align-items: center; justify-content: center; gap: 7px; transform: translateX(6px); }
+.found-analyzing-dots img { display: block; animation: found-analyzing-pulse 1.2s ease-in-out infinite; }
+.found-analyzing-dots img:nth-child(2) { animation-delay: .15s; }
+.found-analyzing-dots img:nth-child(3) { animation-delay: .3s; }
+.found-analyzing-step { margin: 24px 0 0; color: #0766ad; font-size: 13px; font-weight: 700; line-height: 16px; }
+.found-analyzing-copy h2 { margin: 8px 0 0; font-size: clamp(24px, 7.18vw, 28px); font-weight: 600; line-height: 33px; letter-spacing: -.6px; }
+.found-analyzing-description { margin: 21px 0 0; color: #64788a; font-size: 15px; font-weight: 500; line-height: 20px; letter-spacing: -.2px; }
+@keyframes found-analyzing-pulse { 50% { opacity: .4; } }
+@media (prefers-reduced-motion: reduce) { .found-analyzing-dots img { animation: none; } }
+@media (max-width: 350px) { .found-analyzing-description { font-size: 12px; } }
