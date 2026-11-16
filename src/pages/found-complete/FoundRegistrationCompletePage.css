@@ -1,0 +1,52 @@
+.found-completion-page { display: flex; flex-direction: column; }
+.found-completion-hero { margin-top: 24px; text-align: center; }
+.found-completion-mark { position: relative; width: 68px; height: 68px; margin: 0 auto; transform: translateX(6px); }
+.found-completion-mark img { position: absolute; display: block; }
+.found-completion-mark img:first-child { top: -20px; left: -20px; }
+.found-completion-mark img:last-child { top: 18px; left: 18px; }
+.found-completion-hero h2 { margin: 22px 0 0; font-size: clamp(24px, 7.18vw, 28px); font-weight: 600; line-height: 33px; letter-spacing: -.6px; transform: translateX(6px); }
+.found-completion-hero > p { margin: 17px 0 0; color: #64788a; font-size: 15px; line-height: 18px; transform: translateX(6px); }
+.found-completion-summary { position: relative; height: 86px; flex-shrink: 0; margin-top: 36px; border-radius: 16px; background: url('../../assets/found-complete/summary-surface.svg') center / 100% 100% no-repeat; }
+.found-completion-photo { position: absolute; top: 8px; left: 13px; width: 74px; height: 70px; overflow: hidden; border-radius: 14px; background: url('../../assets/found-complete/photo-surface.svg') center no-repeat; }
+.found-completion-photo-crop { width: 100%; height: 100%; }
+.found-completion-photo-crop > img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.found-completion-photo-crop.is-sample { position: absolute; top: 12px; left: 8px; width: 58px; height: 45px; overflow: hidden; }
+.found-completion-photo-crop.is-sample > img { position: absolute; top: -30.43%; left: -35.24%; width: 171.78%; height: auto; }
+.found-completion-item-copy { position: absolute; top: 8px; right: 59px; left: 99px; }
+.found-completion-badge { position: relative; display: grid; width: 60px; height: 23px; place-items: center; color: #426c20; font-size: 12px; font-weight: 700; line-height: 15px; }
+.found-completion-badge > img { position: absolute; top: -.5px; left: -.5px; display: block; }
+.found-completion-badge > span { position: relative; }
+.found-completion-item-copy h3 { margin: 6px 0 0; overflow: hidden; color: #10283b; font-size: 13px; font-weight: 700; line-height: 16px; text-overflow: ellipsis; white-space: nowrap; }
+.found-completion-item-copy p { margin: 6px 0 0; overflow: hidden; color: #64788a; font-size: 10px; font-weight: 500; line-height: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.found-completion-edit { position: absolute; top: 26px; right: 20px; display: grid; width: 32px; height: 32px; padding: 0; place-items: center; border: 0; border-radius: 6px; background: transparent; }
+.found-completion-edit img { display: block; }
+.found-completion-matching { position: relative; height: 86px; flex-shrink: 0; margin-top: 17px; border-radius: 16px; background: url('../../assets/found-complete/matching-surface.svg') center / 100% 100% no-repeat; }
+.found-completion-radar { position: absolute; top: 17px; left: 14px; width: 53px; height: 53px; }
+.found-completion-radar img { position: absolute; display: block; }
+.found-completion-radar img:nth-child(1) { top: 2px; left: 2px; }
+.found-completion-radar img:nth-child(2) { top: 6px; left: 6px; }
+.found-completion-radar img:nth-child(3) { top: 0; left: 0; }
+.found-completion-radar img:nth-child(4) { top: 16px; left: 16px; }
+.found-completion-matching > div:last-child { position: absolute; top: 27px; right: 12px; left: 80px; }
+.found-completion-matching h3 { margin: 0; font-size: 13px; font-weight: 700; line-height: 16px; }
+.found-completion-matching p { margin: 8px 0 0; color: #56758b; font-size: 10px; font-weight: 500; line-height: 12px; }
+.found-completion-info { display: flex; min-height: 69px; flex-shrink: 0; align-items: center; gap: 15px; margin-top: 17px; padding: 12px 20px; border-radius: 14px; background: url('../../assets/found-complete/info-surface.svg') center / 100% 100% no-repeat; }
+.found-completion-info img { display: block; flex-shrink: 0; }
+.found-completion-info p { margin: 0; color: #64788a; font-size: 13px; font-weight: 500; line-height: 16px; }
+.found-completion-footer { display: flex; flex-direction: column; gap: 10px; margin-top: auto; padding-top: 32px; }
+.found-completion-footer button { display: block; width: 100%; flex-shrink: 0; padding: 0 12px; border: 0; border-radius: 16px; font-size: 16px; font-weight: 700; line-height: 20px; }
+.found-completion-results { height: 55px; background: url('../../assets/photo-picker/camera-button.svg') center / 100% 55px no-repeat; color: #10283b; }
+.found-completion-home { height: 54px; background: url('../../assets/lost-form-new/button.svg') center / 100% 54px no-repeat; color: #fff; }
+.found-completion-dialog { position: fixed; width: min(350px, calc(100vw - 40px)); max-height: calc(100dvh - 40px); padding: 24px 20px 20px; overflow-y: auto; border: 1px solid #c6dcea; border-radius: 20px; background: #f7fbff; color: #10283b; font-family: 'Pretendard Variable', sans-serif; }
+.found-completion-dialog::backdrop { background: url('../../assets/found-registration/picker-dim.svg') center / 100% 100% no-repeat; }
+.found-completion-dialog > h2 { margin: 0 40px 24px 0; font-size: 20px; line-height: 26px; }
+.found-completion-dialog-close { position: absolute; top: 12px; right: 12px; width: 39px; height: 39px; padding: 0; border: 0; border-radius: 50%; background: transparent; }
+.found-completion-dialog-close img { display: block; }
+.found-completion-dialog h3 { font-size: 16px; line-height: 24px; }
+.found-completion-dialog p { color: #64788a; font-size: 14px; line-height: 22px; }
+.found-completion-dialog ul { padding: 0; list-style: none; }
+.found-completion-dialog li { display: flex; flex-direction: column; gap: 6px; padding: 12px 0; border-bottom: 1px solid #d6e5ef; }
+.found-completion-dialog-confirm { width: 100%; height: 46px; margin-top: 16px; border: 0; border-radius: 12px; background: #0766ad; color: #fff; font-family: inherit; font-size: 15px; font-weight: 700; }
+.found-completion-dialog button { cursor: pointer; }
+.found-completion-dialog button:focus-visible { outline: 2px solid #0766ad; outline-offset: 3px; }
+@media (max-width: 350px) { .found-completion-hero > p { font-size: 12px; } .found-completion-info { gap: 10px; padding-inline: 14px; } .found-completion-info p { font-size: 11px; } .found-completion-matching h3 { font-size: 12px; } .found-completion-matching p { font-size: 9px; } }

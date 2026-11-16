@@ -21,6 +21,7 @@ import SplashPage from './pages/splash/SplashPage';
 import FoundAnalysisPage from './pages/found-analysis/FoundAnalysisPage';
 import FoundItemRegistrationPage from './pages/found-item/FoundItemRegistrationPage';
 import FoundAnalyzingPage from './pages/found-analyzing/FoundAnalyzingPage';
+import FoundRegistrationCompletePage from './pages/found-complete/FoundRegistrationCompletePage';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route path="/found-analysis" element={<FoundAnalysisPage />} />
         <Route path="/found-item" element={<FoundItemRegistrationPage />} />
         <Route path="/found-analyzing" element={<FoundAnalyzingPage />} />
+        <Route path="/found-complete" element={<FoundRegistrationCompletePage />} />
         <Route path="/ai-feature" element={<AiFeaturePage />} />
         <Route path="/complete" element={<RegistrationCompletePage />} />
         <Route path="/return-history" element={<ReturnHistoryPage />} />

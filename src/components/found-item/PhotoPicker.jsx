@@ -23,8 +23,8 @@ export default function PhotoPicker({ isOpen, onClose, onCamera, onGallery }) {
       <p id="found-photo-picker-description">사진을 등록할 방법을 선택해 주세요.</p>
       <button className="found-photo-picker-close" type="button" aria-label="사진 선택 닫기" onClick={onClose}><img src={closeIcon} alt="" /></button>
       <div className="found-photo-picker-actions">
-        <button className="found-photo-picker-camera" type="button" onClick={onCamera}>카메라로 촬영하기</button>
-        <button className="found-photo-picker-gallery" type="button" onClick={onGallery}>갤러리에서 사진 선택하기</button>
+        <button className="found-photo-picker-camera" type="button" onClick={() => { dialogRef.current.close(); onCamera(); }}>카메라로 촬영하기</button>
+        <button className="found-photo-picker-gallery" type="button" onClick={() => { dialogRef.current.close(); onGallery(); }}>갤러리에서 사진 선택하기</button>
       </div>
     </dialog>
   );

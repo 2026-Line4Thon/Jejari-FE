@@ -28,3 +28,14 @@ export function createMockFoundAnalysis() {
 export function createMockFoundItem() {
   return { ...mockAnalysis, photo: mockPhoto.source, photoChanged: false };
 }
+
+export function createMockFoundRegistration() {
+  return {
+    ...createMockFoundItem(),
+    foundDraft: { place: '중앙도서관 2층', date: '2026-03-18', time: '', description: '', photos: createMockFoundPhotos() },
+  };
+}
+
+export function createMockFoundMatching() {
+  return { status: 'matching', candidates: [] };
+}

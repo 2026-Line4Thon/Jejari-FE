@@ -14,6 +14,8 @@ export default function FoundItemRegistrationPage() {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [photoError, setPhotoError] = useState('');
   const addPhotoButton = useRef(null);
+  const cameraInput = useRef(null);
+  const galleryInput = useRef(null);
   const { photos, cover, coverIndex, setCoverIndex, isLoading: isReading, error: selectionError, selectPhotos } = useFoundPhotos(draft.photos);
 
   const updateField = (event) => {
@@ -24,7 +26,15 @@ export default function FoundItemRegistrationPage() {
   const choosePhotos = (origin) => {
     setIsPickerOpen(false);
     setPhotoError('');
-    selectPhotos(origin);
+    (origin === 'camera' ? cameraInput : galleryInput).current?.click();
+  };
+
+  const receivePhotos = (event, origin) => {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = '';
+    if (!files.length) return;
+    setPhotoError('');
+    selectPhotos(origin, files);
   };
 
   const proceed = (event) => {
@@ -63,6 +73,8 @@ export default function FoundItemRegistrationPage() {
         <label className="found-registration-field found-registration-description"><span>특징 및 상세 설명 <em>선택</em></span><textarea name="description" value={draft.description} onChange={updateField} placeholder="발견 당시 상태나 보관 장소를 적어 주세요." /></label>
         <div className="found-registration-submit-wrap"><button className="found-registration-submit" type="submit" disabled={isReading}>다음 · AI와 특징 정리하기</button></div>
       </form>
+      <input ref={cameraInput} type="file" accept="image/*" capture="environment" hidden aria-label="카메라로 사진 촬영" onChange={(event) => receivePhotos(event, 'camera')} disabled={isReading} />
+      <input ref={galleryInput} type="file" accept="image/*" multiple hidden aria-label="기기 갤러리에서 사진 선택" onChange={(event) => receivePhotos(event, 'gallery')} disabled={isReading} />
       <PhotoPicker isOpen={isPickerOpen} onClose={() => setIsPickerOpen(false)} onCamera={() => choosePhotos('camera')} onGallery={() => choosePhotos('gallery')} />
     </main>
   );
