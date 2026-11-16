@@ -17,6 +17,7 @@
 .quick-action small { position:absolute; right:12px; bottom:19px; left:16px; color:#64788a; font-size:12px; letter-spacing:-.45px; white-space:nowrap; }
 .action-arrow { position:absolute; right:15px; top:19px; width:16px; height:16px; }
 .matching-status { position:absolute; top:42.89%; left:5.13%; width:89.74%; height:9.83dvh; }
+.matching-status:focus-visible { outline:2px solid #0766ad; outline-offset:3px; border-radius:16px; }
 .status-surface { position:absolute; inset:0; width:351px; height:9.83dvh; max-width:100%; }
 .status-copy { position:absolute; top:0; bottom:0; left:17px; display:flex; flex-direction:column; justify-content:center; gap:6px; }
 .status-copy > div { display:flex; align-items:center; gap:6px; }
