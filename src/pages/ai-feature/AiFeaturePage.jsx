@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './AiFeaturePage.css';
 import pageBackground from '../../assets/lost-form-new/background.svg';
 import backSurface from '../../assets/recent-found/back.svg';
@@ -14,6 +14,9 @@ const markChoices = ['스티커 있음', '흠집 있음', '잘 모르겠어요']
 
 export default function AiFeaturePage() {
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const lostDraft = state?.lostDraft;
+  const goBack = () => lostDraft ? navigate('/lost-item' + (lostDraft.mode === 'text' ? '?mode=text' : ''), { state: { lostDraft } }) : navigate(-1);
   const [answer, setAnswer] = useState('');
   const [materialAnswer, setMaterialAnswer] = useState('');
   const [markAnswer, setMarkAnswer] = useState('');
@@ -42,7 +45,7 @@ export default function AiFeaturePage() {
   return <main className="ai-chat-page">
     <img className="ai-chat-background" src={pageBackground} alt="" />
     <header className="ai-chat-header">
-      <button type="button" onClick={() => navigate(-1)} aria-label="이전 화면"><img src={backSurface} alt="" /><img src={backArrow} alt="" /></button>
+      <button type="button" onClick={goBack} aria-label="이전 화면"><img src={backSurface} alt="" /><img src={backArrow} alt="" /></button>
       <h1>AI와 특징 정리</h1>
     </header>
     <section ref={contentRef} className={`ai-chat-content${isSummary ? ' summary-mode' : ''}`}>

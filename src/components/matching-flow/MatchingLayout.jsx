@@ -1,13 +1,13 @@
 import { FoundItemHeader } from '../found-item/FoundItemLayout';
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { matchingSurfaceStyles, matchingAssets } from './matchingAssets';
 import './MatchingFlow.css';
 
-export function MatchingLayout({ title, titleId, onBack, className = '', children }) {
+export function MatchingLayout({ title, titleId, onBack, className = '', style, children }) {
   const location = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [location.key]);
-  return <main className={'found-item-page matching-flow-page ' + className} style={matchingSurfaceStyles} aria-labelledby={titleId}><FoundItemHeader title={title} titleId={titleId} onBack={onBack} />{children}</main>;
+  return <main className={'found-item-page matching-flow-page ' + className} style={{ ...matchingSurfaceStyles, ...style }} aria-labelledby={titleId}><FoundItemHeader title={title} titleId={titleId} onBack={onBack} />{children}</main>;
 }
 
 export function MatchingLoadState({ title, error, onBack }) {
@@ -20,6 +20,18 @@ export function CandidatePhoto({ photo, size = 'card', similarity = 'high' }) {
 
 export function SimilarityBadge({ similarity, detail = false }) {
   return <span className={'matching-similarity-badge' + (detail ? ' is-detail' : '')}>{similarity === 'high' ? '높은 유사도' : '낮은 유사도'}</span>;
+}
+
+export function MatchingCandidateCard({ candidate, dateLabel, to, state }) {
+  return <Link className="matching-candidate-card" to={to} state={state} aria-label={candidate.name + ', ' + candidate.place + ', ' + dateLabel + ' 상세 보기'}>
+    <CandidatePhoto photo={candidate.photo} similarity={candidate.similarity} />
+    <div className="matching-candidate-copy"><SimilarityBadge similarity={candidate.similarity} /><h3>{candidate.name}</h3><p className="matching-attributes">{candidate.attributes}</p><p className="matching-candidate-meta"><img src={matchingAssets.map} alt="" /><span>{candidate.place}</span></p><p className="matching-candidate-meta"><img src={matchingAssets.clock} alt="" /><span>{dateLabel}</span></p></div>
+    <img className="matching-candidate-chevron" src={matchingAssets.chevron} alt="" />
+  </Link>;
+}
+
+export function MatchingReasons({ reasons, icon = matchingAssets.jejari, titleId = 'matching-reasons-title' }) {
+  return <section className="matching-reasons" aria-labelledby={titleId}><h2 id={titleId}><img src={icon} alt="" />Jejari가 비슷하다고 판단한 이유</h2><ol>{reasons.map((reason, index) => <li key={reason.title}><span className="matching-number">{index + 1}</span><div><h3>{reason.title}</h3><p>{reason.description}</p></div></li>)}</ol></section>;
 }
 
 export function ReturnPeople() {

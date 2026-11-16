@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { FoundItemHeader } from '../../components/found-item/FoundItemLayout';
-import useFoundMatching from '../../hooks/useFoundMatching';
+import { foundMatchingListPath } from '../../components/found-matching/foundMatchingRoutes';
+import { formatFoundDate } from '../../utils/formatFoundDate';
 import { createMockFoundRegistration } from '../../mocks/foundItems';
 import successGlow from '../../assets/found-complete/success-glow.svg';
 import successCheck from '../../assets/complete/check.svg';
@@ -12,14 +13,7 @@ import radarInner from '../../assets/complete/radar-ring-one.svg';
 import radarOuter from '../../assets/complete/radar-ring-two.svg';
 import radarSearch from '../../assets/complete/radar-mark.svg';
 import bell from '../../assets/complete/bell.svg';
-import closeIcon from '../../assets/photo-picker/close.svg';
 import './FoundRegistrationCompletePage.css';
-
-function formatDate(value) {
-  if (!value) return '';
-  const date = new Date(`${value}T00:00:00`);
-  return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' });
-}
 
 export default function FoundRegistrationCompletePage() {
   const navigate = useNavigate();
@@ -29,24 +23,14 @@ export default function FoundRegistrationCompletePage() {
     const incoming = location.state?.foundItem;
     return incoming ? { ...mock, ...incoming, foundDraft: incoming.foundDraft ?? mock.foundDraft } : mock;
   });
-  const resultsDialog = useRef(null);
-  const { data: results, isLoading, error, loadResults } = useFoundMatching();
-  const detail = [item.foundDraft.place, formatDate(item.foundDraft.date)].filter(Boolean).join(' · ');
+  const detail = [item.foundDraft.place, formatFoundDate(item.foundDraft.date)].filter(Boolean).join(' · ');
 
   const editItem = () => {
     window.scrollTo(0, 0);
     navigate('/found-analysis', { state: { foundItem: item } });
   };
   const goHome = () => { window.scrollTo(0, 0); navigate('/home'); };
-  const openResults = () => {
-    resultsDialog.current?.showModal();
-    loadResults();
-  };
-  const closeFromBackdrop = (event) => {
-    if (event.target !== event.currentTarget) return;
-    const bounds = event.currentTarget.getBoundingClientRect();
-    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) event.currentTarget.close();
-  };
+  const openResults = () => navigate(foundMatchingListPath, { state: { foundItem: item } });
 
   return (
     <main className="found-item-page found-completion-page" aria-labelledby="found-completion-title">
@@ -80,14 +64,6 @@ export default function FoundRegistrationCompletePage() {
         <button className="found-completion-home" type="button" onClick={goHome}>홈으로 이동</button>
       </footer>
 
-      <dialog className="found-completion-dialog" ref={resultsDialog} aria-labelledby="found-completion-results-title" onClick={closeFromBackdrop}>
-        <h2 id="found-completion-results-title">자동 매칭 결과</h2>
-        <button className="found-completion-dialog-close" type="button" aria-label="매칭 결과 닫기" onClick={() => resultsDialog.current?.close()}><img src={closeIcon} alt="" /></button>
-        <div aria-live="polite">
-          {isLoading ? <p>매칭 결과를 확인하고 있어요.</p> : error ? <p className="found-item-error" role="alert">{error}</p> : results?.candidates?.length ? <ul>{results.candidates.map((candidate) => <li key={candidate.id}><strong>{candidate.kind}</strong><span>{candidate.place}</span></li>)}</ul> : <><h3>아직 매칭된 분실물이 없어요.</h3><p>새로운 분실물이 올라오면<br />사진과 특징을 다시 비교해요.</p></>}
-        </div>
-        <button className="found-completion-dialog-confirm" type="button" onClick={() => resultsDialog.current?.close()}>확인</button>
-      </dialog>
     </main>
   );
 }

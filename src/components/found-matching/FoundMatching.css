@@ -1,0 +1,12 @@
+.found-matching-list-page .matching-list-intro h2 { gap:4px; }
+.found-matching-list-page .matching-candidate-list { margin-top:20px; }
+.found-matching-footer { flex-shrink:0; margin-top:auto; padding-top:28px; }
+.found-matching-list-page .found-matching-footer .matching-primary-button { background-image:var(--found-matching-list-home); }
+.found-matching-detail-page .found-matching-footer .matching-primary-button { background-image:var(--found-matching-detail-home); }
+.found-matching-detail-page .matching-reasons { min-height:0; margin-top:30px; padding:0; border-radius:0; background:none; }
+.found-matching-detail-page .matching-reasons ol { gap:23px; }
+.found-matching-detail-page .matching-reasons li:not(:first-child) > div { transform:translateY(-2px); }
+.found-matching-detail-page .matching-reasons li p { overflow-wrap:anywhere; }
+@media (max-width:350px) {
+  .found-matching-list-page .matching-list-intro h2 { font-size:11px; }
+}
