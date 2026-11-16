@@ -5,3 +5,11 @@
 .registered-info>img{width:20px;height:20px;margin-right:18px}
 .registered-page footer{bottom:3.44dvh;display:flex;flex-direction:column;gap:8px}.registered-page footer button{flex:0 0 54px}.registered-page footer .registered-home{background:rgba(255,255,255,.82);color:#10283b}.registered-page footer .registered-results{border:0;background:#0872bb;color:#fff}
 .registered-item>.registered-item-photo{position:relative;display:block;width:76px;height:76px;margin-right:16px;overflow:hidden;border-radius:12px;background:linear-gradient(180deg,#e2e5e7,#b7bcc0)}.registered-item-photo img{position:absolute;top:-15px;left:-15px;width:106px;height:106px;object-fit:contain;mix-blend-mode:multiply}.registered-item>.registered-edit{width:16.472px;height:15px;margin-left:auto}
+.registered-found-page{font-family:'Pretendard Variable','Wanted Sans Variable',sans-serif}
+.registered-found-page .registered-notice{font-size:14px}
+.registered-found-page .registered-item-photo{flex-shrink:0}
+.registered-found-page .registered-item>div{min-width:0}
+.registered-found-page .registered-item strong,.registered-found-page .registered-item div>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.registered-found-page .registered-edit-button{display:grid;flex:0 0 32px;width:32px;height:32px;margin-left:auto;padding:0;place-items:center;border:0;border-radius:6px;background:transparent;cursor:pointer}
+.registered-found-page .registered-edit-button img{width:16.472px;height:15px}
+.registered-found-page .uploaded-photo img{position:static;width:100%;height:100%;object-fit:contain;mix-blend-mode:normal}

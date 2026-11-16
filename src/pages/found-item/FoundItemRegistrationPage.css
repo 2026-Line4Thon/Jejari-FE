@@ -1,0 +1,29 @@
+.found-registration-page { display: flex; flex-direction: column; }
+.found-registration-intro { margin-top: 24px; }
+.found-registration-intro h2 { margin: 0; font-size: clamp(22px, 6.67vw, 26px); font-weight: 600; line-height: 34px; letter-spacing: -.6px; }
+.found-registration-intro p { margin: 10px 0 0; color: #64788a; font-size: 13px; line-height: 16px; }
+.found-registration-form { display: flex; flex: 1; flex-direction: column; margin-top: 18px; }
+.found-registration-label, .found-registration-field > span { display: block; font-size: 14px; font-weight: 700; line-height: 17px; }
+.found-registration-photo-field > .found-item-photo { margin-top: 12px; }
+.found-registration-upload { display: flex; width: 100%; height: 100px; flex-direction: column; align-items: center; margin-top: 12px; padding: 11px 0 0; border: 0; border-radius: 16px; background: url('../../assets/found-registration/upload-surface.svg') center / 100% 100% no-repeat; color: #10283b; }
+.found-registration-upload img { display: block; }
+.found-registration-upload strong { margin-top: 7px; font-size: 15px; line-height: 18px; }
+.found-registration-upload small { margin-top: 7px; color: #8b8a93; font-size: 12px; line-height: 15px; }
+.found-registration-place { margin-top: 28px; }
+.found-registration-field { display: block; min-width: 0; }
+.found-registration-field em { margin-left: 4px; color: #91a3b2; font-size: 12px; font-style: normal; font-weight: 400; }
+.found-registration-field input { display: block; width: 100%; min-width: 0; height: 46px; margin-top: 9px; padding: 0 13px; border: 0; border-radius: 13px; background: url('../../assets/found-analysis/input.svg') center / 100% 46px no-repeat; color: #10283b; font-size: 15px; line-height: 20px; }
+.found-registration-field-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 22px; }
+.found-registration-field-row input { background-image: url('../../assets/found-analysis/short-input.svg'); }
+.found-registration-field-row input:not(.has-value):not(:focus) { color: transparent; }
+.found-registration-field-row input:not(:focus)::-webkit-calendar-picker-indicator { opacity: 0; }
+.found-registration-description { margin-top: 22px; }
+.found-registration-description textarea { display: block; width: 100%; height: 102px; margin-top: 12px; padding: 11px 14px; resize: vertical; border: 0; border-radius: 16px; background: url('../../assets/found-registration/textarea.svg') center / 100% 100% no-repeat; color: #10283b; font-size: 15px; line-height: 21px; }
+.found-registration-description textarea::placeholder { color: #8b8a93; opacity: 1; }
+.found-registration-submit-wrap { margin-top: auto; padding-top: 20px; }
+.found-registration-submit { width: 100%; height: 54px; padding: 0 10px; border: 0; border-radius: 16px; background: url('../../assets/found-analysis/button.svg') center / 100% 54px no-repeat; color: #fff; font-size: 16px; font-weight: 700; }
+.found-registration-thumbnails { display: flex; gap: 8px; margin-top: 8px; }
+.found-registration-thumbnails button { width: 52px; height: 52px; padding: 3px; overflow: hidden; border: 1px solid #c6dcea; border-radius: 10px; background: #fff; }
+.found-registration-thumbnails button[aria-pressed='true'] { outline: 2px solid #0766ad; outline-offset: 1px; }
+.found-registration-thumbnails img { display: block; width: 100%; height: 100%; object-fit: contain; }
+@media (max-width: 350px) { .found-registration-intro p { font-size: 11px; } .found-registration-description textarea { font-size: 13px; } }

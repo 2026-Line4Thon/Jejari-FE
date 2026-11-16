@@ -55,7 +55,7 @@ export default function DashboardPage() {
             <img className="action-symbol" src={lostIcon} alt="" />
             <strong>물건을<br />잃어버렸어요</strong><small>사진 또는 설명으로 찾기</small><img className="action-arrow" src={arrow} alt="" />
           </button>
-          <button className="quick-action found-action" type="button">
+          <button className="quick-action found-action" type="button" onClick={() => navigate('/found-item')}>
             <img className="action-card-surface" src={foundCard} alt="" />
             <img className="action-icon-surface" src={actionIcon} alt="" />
             <img className="action-symbol" src={foundIcon} alt="" />

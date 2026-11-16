@@ -1,0 +1,46 @@
+@font-face {
+  font-family: 'Pretendard Variable';
+  src: url('../../assets/found-analysis/PretendardVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+.found-item-page {
+  min-height: 100dvh;
+  padding: max(12px, env(safe-area-inset-top)) 20px max(29px, env(safe-area-inset-bottom));
+  background: #f7fbff url('../../assets/found-analysis/background.svg') center / 100% 100% no-repeat;
+  color: #10283b;
+  font-family: 'Pretendard Variable', sans-serif;
+}
+
+.found-item-header { position: relative; display: flex; align-items: center; justify-content: center; height: 39px; flex-shrink: 0; }
+.found-item-header h1 { margin: 0; font-size: 18px; font-weight: 700; line-height: 24px; }
+.found-item-header button { position: absolute; left: 0; display: grid; width: 39px; height: 39px; padding: 0; place-items: center; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
+.found-item-header img { display: block; }
+.found-item-header button img:first-child { position: absolute; inset: 0; }
+.found-item-header button img:last-child { position: relative; }
+.found-item-step { display: flex; justify-content: space-between; margin-top: 29px; color: #64788a; font-size: 11px; line-height: 13px; }
+.found-item-step strong { padding-right: 2px; color: #0766ad; font-weight: 700; }
+.found-item-progress { height: 3px; flex-shrink: 0; margin-top: 12px; background: url('../../assets/found-analysis/progress-active.svg') left top / 36.91% 3px no-repeat, url('../../assets/found-analysis/progress.svg') left top / 100% 3px no-repeat; }
+.found-item-page :is(button, input, textarea):focus-visible, .found-photo-picker button:focus-visible { outline: 2px solid #0766ad; outline-offset: 3px; }
+.found-item-page button { cursor: pointer; }
+.found-item-page button:disabled { cursor: wait; opacity: .65; }
+.found-item-error { margin: 8px 0 0; color: #b42318; font-size: 12px; line-height: 18px; }
+
+.found-item-photo { position: relative; height: 100px; overflow: hidden; border-radius: 16px; background: url('../../assets/found-registration/upload-surface.svg') center / 100% 100% no-repeat; }
+.found-item-photo.is-analysis { background-image: url('../../assets/found-analysis/photo-surface.svg'); }
+.found-item-photo-crop { position: absolute; top: 8px; left: 12px; width: calc(100% - 130px); height: 84px; overflow: hidden; }
+.found-item-photo-crop > img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.found-item-photo-crop.is-sample { top: 7px; left: 34%; width: 104px; height: 80.69px; }
+.found-item-photo-crop.is-sample > img { position: absolute; top: -30.43%; left: -35.24%; width: 171.78%; height: auto; }
+.found-item-photo-change, .found-item-photo-complete { position: absolute; right: 10px; display: flex; align-items: center; justify-content: center; gap: 3px; width: 96px; height: 25px; padding: 0; border: 0; border-radius: 14px; font-size: 11px; font-weight: 600; line-height: 13px; white-space: nowrap; }
+.found-item-photo-change { top: 39px; background: url('../../assets/found-analysis/photo-change.svg') center no-repeat; color: #91a3b2; }
+.found-item-photo-complete { top: 67px; background: url('../../assets/found-analysis/photo-complete.svg') center no-repeat; color: #426c20; }
+.found-item-photo-complete img, .found-item-privacy-badge img { display: block; }
+.found-item-image-icon { position: relative; width: 16.49px; height: 16.49px; }
+.found-item-image-icon img { position: absolute; }
+.found-item-image-icon img:nth-child(1) { top: 2.13px; left: 1.44px; }
+.found-item-image-icon img:nth-child(2) { top: 4.88px; left: 4.19px; }
+.found-item-image-icon img:nth-child(3) { top: 6.25px; left: 2.82px; }
+.found-item-privacy-badge { position: absolute; bottom: 6px; left: 10px; display: flex; align-items: center; gap: 4px; width: 101px; height: 31px; padding-left: 8px; background: url('../../assets/found-analysis/privacy-badge.svg') center no-repeat; color: #66656d; font-size: 12px; font-weight: 700; white-space: nowrap; }
