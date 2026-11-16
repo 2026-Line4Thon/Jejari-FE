@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './DashboardPage.css';
 import background from '../../assets/dashboard-new/background.svg';
 import headerSurface from '../../assets/dashboard-new/header.svg';
@@ -63,14 +63,14 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        <article className="matching-status">
+        <Link className="matching-status" to="/matches">
           <img className="status-surface" src={statusCard} alt="" />
           <div className="status-copy">
             <div><img className="status-pulse" src={pulse} alt="" /><strong>내 매칭 현황</strong></div>
             <p>무선 이어폰 · 후보 3개 발견</p>
           </div>
           <img className="match-count" src={count} alt="" /><b>3건</b>
-        </article>
+        </Link>
 
         <section className="recent-items" aria-labelledby="recent-title">
           <div className="recent-heading"><h2 id="recent-title">최근 등록된 분실물</h2><button type="button" onClick={() => navigate('/find')}>전체보기</button></div>
