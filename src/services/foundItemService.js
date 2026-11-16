@@ -29,7 +29,15 @@ export const foundItemService = {
     await waitForAnalysis(signal);
     return { ...createMockFoundAnalysis(), privacyProtected: foundDraft.photos[0].privacyProtected === true };
   },
-  async getMatchingResults() {
-    return createMockFoundMatching();
+  // Finder-facing candidate-list endpoint is not in the supplied API catalog.
+  // Keep this mock boundary until its request/response contract is defined.
+  async getMatchingResults(foundItem) {
+    return createMockFoundMatching(foundItem);
+  },
+  // GET /candidates/:candidateId: map the eventual response into this public UI model.
+  async getMatchingCandidate(candidateId) {
+    const candidate = createMockFoundMatching().candidates.find((item) => item.id === candidateId);
+    if (!candidate) throw new Error('매칭 후보를 찾을 수 없어요. 다른 후보를 확인해 주세요.');
+    return candidate;
   },
 };

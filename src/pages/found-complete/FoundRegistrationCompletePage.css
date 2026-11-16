@@ -37,16 +37,4 @@
 .found-completion-footer button { display: block; width: 100%; flex-shrink: 0; padding: 0 12px; border: 0; border-radius: 16px; font-size: 16px; font-weight: 700; line-height: 20px; }
 .found-completion-results { height: 55px; background: url('../../assets/photo-picker/camera-button.svg') center / 100% 55px no-repeat; color: #10283b; }
 .found-completion-home { height: 54px; background: url('../../assets/lost-form-new/button.svg') center / 100% 54px no-repeat; color: #fff; }
-.found-completion-dialog { position: fixed; width: min(350px, calc(100vw - 40px)); max-height: calc(100dvh - 40px); padding: 24px 20px 20px; overflow-y: auto; border: 1px solid #c6dcea; border-radius: 20px; background: #f7fbff; color: #10283b; font-family: 'Pretendard Variable', sans-serif; }
-.found-completion-dialog::backdrop { background: url('../../assets/found-registration/picker-dim.svg') center / 100% 100% no-repeat; }
-.found-completion-dialog > h2 { margin: 0 40px 24px 0; font-size: 20px; line-height: 26px; }
-.found-completion-dialog-close { position: absolute; top: 12px; right: 12px; width: 39px; height: 39px; padding: 0; border: 0; border-radius: 50%; background: transparent; }
-.found-completion-dialog-close img { display: block; }
-.found-completion-dialog h3 { font-size: 16px; line-height: 24px; }
-.found-completion-dialog p { color: #64788a; font-size: 14px; line-height: 22px; }
-.found-completion-dialog ul { padding: 0; list-style: none; }
-.found-completion-dialog li { display: flex; flex-direction: column; gap: 6px; padding: 12px 0; border-bottom: 1px solid #d6e5ef; }
-.found-completion-dialog-confirm { width: 100%; height: 46px; margin-top: 16px; border: 0; border-radius: 12px; background: #0766ad; color: #fff; font-family: inherit; font-size: 15px; font-weight: 700; }
-.found-completion-dialog button { cursor: pointer; }
-.found-completion-dialog button:focus-visible { outline: 2px solid #0766ad; outline-offset: 3px; }
 @media (max-width: 350px) { .found-completion-hero > p { font-size: 12px; } .found-completion-info { gap: 10px; padding-inline: 14px; } .found-completion-info p { font-size: 11px; } .found-completion-matching h3 { font-size: 12px; } .found-completion-matching p { font-size: 9px; } }

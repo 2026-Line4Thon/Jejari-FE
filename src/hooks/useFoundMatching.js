@@ -1,22 +1,27 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { foundItemService } from '../services/foundItemService';
 
-export default function useFoundMatching() {
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+function useFoundMatchingResource(load) {
+  const [result, setResult] = useState(null);
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(load).then((data) => {
+      if (active) setResult({ load, data, error: '' });
+    }).catch((error) => {
+      if (active) setResult({ load, data: null, error: error.message || '매칭 정보를 불러오지 못했어요.' });
+    });
+    return () => { active = false; };
+  }, [load]);
+  const current = result?.load === load ? result : null;
+  return { data: current?.data ?? null, error: current?.error ?? '', isLoading: !current };
+}
 
-  const loadResults = async () => {
-    setIsLoading(true);
-    setError('');
-    try {
-      setData(await foundItemService.getMatchingResults());
-    } catch (matchingError) {
-      setError(matchingError.message || '매칭 결과를 불러오지 못했어요. 다시 확인해 주세요.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+export default function useFoundMatching(foundItem) {
+  const load = useCallback(() => foundItemService.getMatchingResults(foundItem), [foundItem]);
+  return useFoundMatchingResource(load);
+}
 
-  return { data, isLoading, error, loadResults };
+export function useFoundMatchCandidate(candidateId) {
+  const load = useCallback(() => foundItemService.getMatchingCandidate(candidateId), [candidateId]);
+  return useFoundMatchingResource(load);
 }

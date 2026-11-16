@@ -30,6 +30,8 @@ import ReturnConnectionPage from './pages/return-connection/ReturnConnectionPage
 import ChatListPage from './pages/chats/ChatListPage';
 import ChatRoomPage from './pages/chats/ChatRoomPage';
 import ChatReturnCompletePage from './pages/chats/ChatReturnCompletePage';
+import FoundMatchingResultsPage from './pages/found-matches/FoundMatchingResultsPage';
+import FoundMatchingCandidatePage from './pages/found-matches/FoundMatchingCandidatePage';
 
 function App() {
   return (
@@ -48,6 +50,8 @@ function App() {
         <Route path="/found-item" element={<FoundItemRegistrationPage />} />
         <Route path="/found-analyzing" element={<FoundAnalyzingPage />} />
         <Route path="/found-complete" element={<FoundRegistrationCompletePage />} />
+        <Route path="/found-matches" element={<FoundMatchingResultsPage />} />
+        <Route path="/found-matches/:candidateId" element={<FoundMatchingCandidatePage />} />
         <Route path="/chats" element={<ChatListPage />} />
         <Route path="/chats/:roomId" element={<ChatRoomPage />} />
         <Route path="/chats/:roomId/complete" element={<ChatReturnCompletePage />} />

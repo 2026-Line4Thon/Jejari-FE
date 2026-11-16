@@ -1,4 +1,5 @@
 import earbudsPhoto from '../assets/found-analysis/earbuds.png';
+import { createMockLostCandidates } from './foundMatchingItems';
 
 const mockPhoto = {
   id: 'mock-earbuds',
@@ -31,11 +32,16 @@ export function createMockFoundItem() {
 
 export function createMockFoundRegistration() {
   return {
+    id: 'mock-found-1',
     ...createMockFoundItem(),
     foundDraft: { place: '중앙도서관 2층', date: '2026-03-18', time: '', description: '', photos: createMockFoundPhotos() },
   };
 }
 
-export function createMockFoundMatching() {
-  return { status: 'matching', candidates: [] };
+export function createMockFoundMatching(item = createMockFoundRegistration()) {
+  return {
+    status: 'matched',
+    foundItem: { id: item.id, name: item.kind, color: item.color, place: item.foundDraft?.place ?? '', date: item.foundDraft?.date ?? '' },
+    candidates: createMockLostCandidates(),
+  };
 }
