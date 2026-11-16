@@ -22,6 +22,10 @@ import FoundAnalysisPage from './pages/found-analysis/FoundAnalysisPage';
 import FoundItemRegistrationPage from './pages/found-item/FoundItemRegistrationPage';
 import FoundAnalyzingPage from './pages/found-analyzing/FoundAnalyzingPage';
 import FoundRegistrationCompletePage from './pages/found-complete/FoundRegistrationCompletePage';
+import MatchingCandidatesPage from './pages/matches/MatchingCandidatesPage';
+import MatchingCandidateDetailPage from './pages/matches/MatchingCandidateDetailPage';
+import OwnershipCheckPage from './pages/ownership/OwnershipCheckPage';
+import ReturnConnectionPage from './pages/return-connection/ReturnConnectionPage';
 
 function App() {
   return (
@@ -40,6 +44,10 @@ function App() {
         <Route path="/found-item" element={<FoundItemRegistrationPage />} />
         <Route path="/found-analyzing" element={<FoundAnalyzingPage />} />
         <Route path="/found-complete" element={<FoundRegistrationCompletePage />} />
+        <Route path="/matches" element={<MatchingCandidatesPage />} />
+        <Route path="/matches/:candidateId" element={<MatchingCandidateDetailPage />} />
+        <Route path="/matches/:candidateId/ownership" element={<OwnershipCheckPage />} />
+        <Route path="/matches/:candidateId/return" element={<ReturnConnectionPage />} />
         <Route path="/ai-feature" element={<AiFeaturePage />} />
         <Route path="/complete" element={<RegistrationCompletePage />} />
         <Route path="/return-history" element={<ReturnHistoryPage />} />

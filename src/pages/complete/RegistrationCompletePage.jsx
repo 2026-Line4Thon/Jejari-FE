@@ -40,7 +40,7 @@ export default function RegistrationCompletePage() {
       </section>
       <footer>
         <button className="registered-home" type="button" onClick={() => navigate('/home')}>홈으로 이동</button>
-        <button className="registered-results" type="button">매칭 결과 확인하기</button>
+        <button className="registered-results" type="button" onClick={() => navigate('/matches')}>매칭 결과 확인하기</button>
       </footer>
     </main>
   );
