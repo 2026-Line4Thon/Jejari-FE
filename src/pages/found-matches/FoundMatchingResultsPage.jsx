@@ -25,7 +25,7 @@ export default function FoundMatchingResultsPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const matching = useFoundMatching(location.state?.foundItem);
-  const onBack = () => navigate('/found-complete', { state: location.state });
+  const onBack = () => navigate(location.state?.returnTo === '/mypage' ? '/mypage' : '/found-complete', { state: location.state });
   if (matching.isLoading || matching.error) return <FoundMatchingLayout title="자동 매칭 결과" titleId="found-matching-results-title" onBack={onBack}><FoundMatchingFeedback isLoading={matching.isLoading} error={matching.error} onBack={onBack} /></FoundMatchingLayout>;
   return <FoundMatchingResultsView data={matching.data} onBack={onBack} navigationState={location.state} />;
 }

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ChatLayout, ChatPhoto, ChatFeedback } from '../../components/chat/ChatLayout';
 import { chatAssets } from '../../components/chat/chatAssets';
 import { chatListPath, chatCompletePath } from '../../components/chat/chatRoutes';
@@ -42,6 +42,8 @@ export default function ChatRoomPage() {
   const { roomId } = useParams();
   const chat = useChatRoom(roomId);
   const navigate = useNavigate();
+  const location = useLocation();
+  const onBack = () => navigate(location.state?.returnTo === '/mypage' ? '/mypage' : chatListPath);
   const end = useRef(null);
   const messageCount = chat.data?.messages.length;
   const hasMeeting = Boolean(chat.data?.meeting);
@@ -50,6 +52,6 @@ export default function ChatRoomPage() {
     const room = await chat.complete();
     if (room) navigate(chatCompletePath(room.id));
   };
-  if (chat.isLoading || chat.error) return <ChatLayout className="private-chat-page" onBack={() => navigate(chatListPath)}><ChatFeedback isLoading={chat.isLoading} error={chat.error} /></ChatLayout>;
-  return <ChatRoomView room={chat.data} message={chat.message} onMessage={chat.setMessage} onSend={chat.sendMessage} onComplete={onComplete} onBack={() => navigate(chatListPath)} isPending={chat.isPending} actionError={chat.actionError} endRef={end} />;
+  if (chat.isLoading || chat.error) return <ChatLayout className="private-chat-page" onBack={onBack}><ChatFeedback isLoading={chat.isLoading} error={chat.error} /></ChatLayout>;
+  return <ChatRoomView room={chat.data} message={chat.message} onMessage={chat.setMessage} onSend={chat.sendMessage} onComplete={onComplete} onBack={onBack} isPending={chat.isPending} actionError={chat.actionError} endRef={end} />;
 }
