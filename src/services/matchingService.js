@@ -1,5 +1,8 @@
 import { chatService } from './chatService';
+import { apiEnabled } from '../api/config';
+import { apiMatchingService } from './apiMatchingService';
 import { mockLostItem, mockMatchingCandidates, createMockOwnershipCheck } from '../mocks/matchingItems';
+import { getLostRegistrationPreview } from '../mocks/lostRegistrationStore';
 
 const rejected = new Set();
 const checks = new Map();
@@ -18,9 +21,11 @@ function checkById(id) {
 }
 
 // Mock methods follow the supplied API's feature boundaries. No HTTP requests.
-export const matchingService = {
+const mockMatchingService = {
   // GET /items/lost/:itemId/candidates
   async getCandidates(lostItemId = mockLostItem.id) {
+    const preview = getLostRegistrationPreview(lostItemId);
+    if (preview) return { lostItem: preview, candidates: [] };
     if (Number(lostItemId) !== mockLostItem.id) throw new Error('등록한 분실물을 찾을 수 없어요.');
     return clone({ lostItem: mockLostItem, candidates: mockMatchingCandidates.filter((item) => !rejected.has(item.id)) });
   },
@@ -73,3 +78,5 @@ export const matchingService = {
     return chatService.sendMessage(roomId, text);
   },
 };
+
+export const matchingService = apiEnabled ? apiMatchingService : mockMatchingService;

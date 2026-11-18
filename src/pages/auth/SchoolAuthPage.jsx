@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import useSchoolAuth from '../../hooks/useSchoolAuth';
 import './SchoolAuthPage.css';
 import loginBackground from '../../assets/login/login-bg.svg';
 import loginLogo from '../../assets/login/login-logo.svg';
@@ -11,13 +11,13 @@ import startButtonSurface from '../../assets/login/start-button.svg';
 
 export default function SchoolAuthPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
-  const [codeSent, setCodeSent] = useState(false);
-  const canStart = codeSent && verificationCode.length === 6;
-
-  const sendVerificationCode = () => {
-    if (email.trim()) setCodeSent(true);
+  const location = useLocation();
+  const auth = useSchoolAuth();
+  const { email, verificationCode, codeSent, canStart, setEmail, setVerificationCode } = auth;
+  const start = async () => {
+    if (!(await auth.verify())) return;
+    const returnTo = location.state?.returnTo;
+    navigate(typeof returnTo === 'string' && returnTo.startsWith('/') && !returnTo.startsWith('//') && !returnTo.startsWith('/login') ? returnTo : '/home', { replace: true });
   };
 
   return (
@@ -32,12 +32,12 @@ export default function SchoolAuthPage() {
         <label className="login-label" htmlFor="school-email">학교 이메일</label>
         <div className="surface-field email-field">
           <img src={emailInputSurface} alt="" />
-          <input id="school-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="student@univ.ac.kr" />
+          <input id="school-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} disabled={Boolean(auth.pending)} placeholder="student@univ.ac.kr" />
         </div>
 
-        <button className="request-code-button" type="button" onClick={sendVerificationCode}>
+        <button className="request-code-button" type="button" onClick={auth.sendCode} disabled={Boolean(auth.pending)}>
           <img src={requestCodeSurface} alt="" />
-          <span>{codeSent ? '인증번호 재발송' : '인증번호 받기'}</span>
+          <span>{auth.pending === 'send' ? '발송 중' : codeSent ? '인증번호 재발송' : '인증번호 받기'}</span>
         </button>
 
         <label className="login-label code-label" htmlFor="verification-code">인증번호</label>
@@ -46,11 +46,11 @@ export default function SchoolAuthPage() {
           <input id="verification-code" type="text" inputMode="numeric" maxLength="6" value={verificationCode} onChange={(event) => setVerificationCode(event.target.value.replace(/\D/g, ''))} placeholder="6자리 숫자 입력" />
         </div>
 
-        <p className="login-security-note"><img src={infoIcon} alt="" />인증 정보는 학교 구성원 확인에만 사용돼요.</p>
+        <p className="login-security-note" role={auth.error ? 'alert' : 'status'}><img src={infoIcon} alt="" />{auth.error || auth.feedback || '인증 정보는 학교 구성원 확인에만 사용돼요.'}</p>
       </section>
 
       <footer className="school-auth-footer">
-        <button type="button" disabled={!canStart} onClick={() => navigate('/home')}>
+        <button type="button" disabled={!canStart} onClick={start}>
           <img src={startButtonSurface} alt="" />
           <span>인증하고 시작하기</span>
         </button>

@@ -32,10 +32,12 @@ import ChatRoomPage from './pages/chats/ChatRoomPage';
 import ChatReturnCompletePage from './pages/chats/ChatReturnCompletePage';
 import FoundMatchingResultsPage from './pages/found-matches/FoundMatchingResultsPage';
 import FoundMatchingCandidatePage from './pages/found-matches/FoundMatchingCandidatePage';
+import ApiSessionBoundary from './components/ApiSessionBoundary';
 
 function App() {
   return (
     <BrowserRouter>
+      <ApiSessionBoundary>
       <Routes>
         <Route path="/" element={<SplashPage />} />
         <Route path="/welcome" element={<HomePage />} />
@@ -66,6 +68,7 @@ function App() {
         <Route path="/privacy-security" element={<PrivacySecurityPage />} />
         <Route path="*" element={<SplashPage />} />
       </Routes>
+      </ApiSessionBoundary>
     </BrowserRouter>
   );
 }

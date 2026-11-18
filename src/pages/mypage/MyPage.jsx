@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import useMyRegistrations from '../../hooks/useMyRegistrations';
 import { getRegistrationBadge } from '../../utils/myRegistrationNavigation';
+import { authService } from '../../services/authService';
 import './MyPage.css';
 import background from '../../assets/lost-form-new/background.svg';
 import backSurface from '../../assets/recent-found/back.svg';
@@ -13,8 +14,8 @@ import schoolShield from '../../assets/mypage/school-shield.svg';
 export default function MyPage() {
   const navigate = useNavigate();
   const registrations = useMyRegistrations();
-  const openRegistration = async (itemId) => {
-    const destination = await registrations.open(itemId);
+  const openRegistration = async (itemId, type) => {
+    const destination = await registrations.open(itemId, type);
     if (destination) navigate(destination.to, { state: destination.state });
   };
   return <main className="my-page">
@@ -26,16 +27,16 @@ export default function MyPage() {
     <section>
       <article className="my-profile">
         <i><img src={profileSurface} alt="" /><img src={profileIcon} alt="프로필" /></i>
-        <div><strong>김멋사</strong><span>minji@univ.ac.kr</span><em><img src={schoolBadge} alt="" /><b><img src={schoolShield} alt="" />학교 인증 완료</b></em></div>
+        <div><strong>{registrations.profile?.nickname ?? ''}</strong><span>{registrations.profile?.email ?? ''}</span><em><img src={schoolBadge} alt="" /><b><img src={schoolShield} alt="" />{registrations.profile?.is_university_verified ? '학교 인증 완료' : '학교 인증 확인 중'}</b></em></div>
       </article>
-      <article className="my-stats"><div><b>2</b><span>분실물</span></div><div><b>1</b><span>습득물</span></div><div><b>3</b><span>반환 완료</span></div></article>
+      <article className="my-stats"><div><b>{registrations.stats?.lost ?? '—'}</b><span>분실물</span></div><div><b>{registrations.stats?.found ?? '—'}</b><span>습득물</span></div><div><b>{registrations.stats?.completed ?? '—'}</b><span>반환 완료</span></div></article>
       <h2>진행 중인 등록</h2>
       {registrations.isLoading && <p className="my-registration-feedback" role="status">등록 내역을 불러오고 있어요.</p>}
       {registrations.error && <p className="my-registration-feedback" role="alert">{registrations.error}</p>}
       {!registrations.isLoading && !registrations.error && !registrations.items.length && <p className="my-registration-feedback">진행 중인 등록이 없어요.</p>}
       {registrations.items.map((item) => {
         const badge = getRegistrationBadge(item);
-        return <button type="button" className="my-item" key={item.id} onClick={() => openRegistration(item.id)} disabled={registrations.pendingId !== null} aria-busy={registrations.pendingId === item.id}>
+        return <button type="button" className="my-item" key={item.type + '-' + item.id} onClick={() => openRegistration(item.id, item.type)} disabled={registrations.pendingId !== null} aria-busy={registrations.pendingId === item.id}>
           <span className={'my-item-photo is-' + item.photo.variant}><img src={item.photo.source} alt="" /></span>
           <div><em className={badge.className}>{badge.label}</em><strong>{item.name}</strong><small>{item.type === 'lost' ? '분실' : '습득'} · {item.place}</small></div>
           <b aria-hidden="true">›</b>
@@ -45,7 +46,7 @@ export default function MyPage() {
         <button onClick={() => navigate('/return-history')}><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg></i>반환 완료 내역 <b>›</b></button>
         <button onClick={() => navigate('/notification-settings')}><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg></i>알림 설정 <b>›</b></button>
         <button onClick={() => navigate('/privacy-security')}><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.7-3 8.2-7 10-4-1.8-7-5.3-7-10V6l7-3Z" /><path d="m9 12 2 2 4-4" /></svg></i>개인정보 및 보안 <b>›</b></button>
-        <button className="logout">로그아웃</button>
+        <button className="logout" onClick={async () => { try { await authService.logout(); } catch { /* Local session is cleared even if server logout fails. */ } finally { navigate('/login', { replace: true }); } }}>로그아웃</button>
       </nav>
     </section>
   </main>;

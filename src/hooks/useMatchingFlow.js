@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { matchingService } from '../services/matchingService';
+import { apiEnabled } from '../api/config';
 
 function useMatchingResource(load) {
   const [result, setResult] = useState(null);
@@ -21,17 +22,20 @@ function useMatchingAction() {
   useEffect(() => { active.current = true; return () => { active.current = false; }; }, []);
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState('');
+  const busy = useRef(false);
   const run = async (operation) => {
+    if (busy.current) return null;
+    busy.current = true;
     setIsPending(true);
     setError('');
     try { const value = await operation(); return active.current ? value : null; }
     catch (actionError) { if (active.current) setError(actionError.message || '요청을 처리하지 못했어요.'); return null; }
-    finally { if (active.current) setIsPending(false); }
+    finally { busy.current = false; if (active.current) setIsPending(false); }
   };
   return { run, isPending, error };
 }
 
-export function useMatchCandidates(lostItemId = 101) {
+export function useMatchCandidates(lostItemId = apiEnabled ? undefined : 101) {
   const load = useCallback(() => matchingService.getCandidates(lostItemId), [lostItemId]);
   return useMatchingResource(load);
 }
@@ -48,12 +52,20 @@ export function useOwnershipCheck(candidateId) {
   const resource = useMatchingResource(load);
   const action = useMatchingAction();
   const [draft, setDraft] = useState({ candidateId, value: '' });
+  const [updated, setUpdated] = useState(null);
+  const data = updated?.candidateId === Number(candidateId) || updated?.candidateId === candidateId ? updated : resource.data;
   const answer = draft.candidateId === candidateId ? draft.value : '';
+  const submit = () => action.run(async () => {
+    const result = await matchingService.submitOwnershipAnswer(data.id, answer);
+    setUpdated(result);
+    setDraft({ candidateId, value: '' });
+    return result;
+  });
   return {
-    ...resource, answer, setAnswer: (value) => setDraft({ candidateId, value }),
-    isPending: action.isPending, actionError: action.error,
-    submit: () => action.run(() => matchingService.submitOwnershipAnswer(resource.data.id, answer)),
-    skip: () => action.run(() => matchingService.skipOwnershipAnswer(resource.data.id)),
+    ...resource, data, answer, setAnswer: (value) => setDraft({ candidateId, value }),
+    isPending: action.isPending, actionError: action.error || (['unverified', 'locked'].includes(data?.status) && apiEnabled ? data.message : ''),
+    submit,
+    skip: () => action.run(() => matchingService.skipOwnershipAnswer(data.id)),
   };
 }
 

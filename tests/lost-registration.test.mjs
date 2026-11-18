@@ -1,0 +1,76 @@
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+
+const root = fileURLToPath(new URL('../', import.meta.url)).replace(/\\/g, '/').replace(/\/$/, '');
+const require = createRequire(root + '/package.json');
+const React = require('react');
+const { renderToStaticMarkup } = require('react-dom/server');
+const { MemoryRouter } = require('react-router-dom');
+const { createServer } = await import(pathToFileURL(require.resolve('vite')));
+const server = await createServer({ root, cacheDir: root + '/node_modules/.cache/jejari-preview-tests', server: { middlewareMode: true, hmr: false }, appType: 'custom', define: { 'import.meta.env.VITE_API_MODE': JSON.stringify('mock') } });
+const originalFetch = globalThis.fetch;
+globalThis.fetch = () => { throw new Error('Preview must not make API requests'); };
+try {
+  const { createLostItemSummary } = await server.ssrLoadModule('/src/utils/lostItemSummary.js');
+  const store = await server.ssrLoadModule('/src/mocks/lostRegistrationStore.js');
+  const { matchingService } = await server.ssrLoadModule('/src/services/matchingService.js');
+  const { myRegistrationService } = await server.ssrLoadModule('/src/services/myRegistrationService.js');
+  const { default: LostItemSummary } = await server.ssrLoadModule('/src/components/LostItemSummary.jsx');
+  const { default: CompletePage } = await server.ssrLoadModule('/src/pages/complete/RegistrationCompletePage.jsx');
+  const { MatchingCandidatesView } = await server.ssrLoadModule('/src/pages/matches/MatchingCandidatesPage.jsx');
+  const { getRegistrationDestination, getRegistrationBadge } = await server.ssrLoadModule('/src/utils/myRegistrationNavigation.js');
+  const baseDraft = { color: '은색', brand: 'Nikon', place: '학생회관 2층', date: '2026-11-18', photos: [{ source: 'blob:camera-photo' }] };
+  const render = (Component, props, initialEntries = ['/']) => renderToStaticMarkup(React.createElement(MemoryRouter, { initialEntries }, React.createElement(Component, props)));
+  for (const kind of ['카메라', '텀블러', '지갑']) {
+    const draft = { ...baseDraft, kind };
+    const summary = createLostItemSummary(draft, { material: '금속', category: '이어폰', color: '검정색', brand: '삼성' });
+    assert.equal(summary.name, kind);
+    assert.equal(summary.color, '은색');
+    assert.equal(summary.brand, 'Nikon');
+    assert.equal(summary.dateLabel, '11월 18일');
+    assert.equal(summary.photo.source, 'blob:camera-photo');
+    const markup = render(LostItemSummary, { item: summary, isPreview: true });
+    for (const expected of [kind, '은색', 'Nikon', '학생회관 2층', '11월 18일', '금속', '입력 정보 미리보기']) assert(markup.includes(expected));
+    for (const unwanted of ['무선 이어폰', '삼성', '중앙도서관', '3월 18일', 'Jejari 정리 완료']) assert(!markup.includes(unwanted));
+    const preview = store.createLostRegistrationPreview(draft, { material: '금속' });
+    const complete = render(CompletePage, {}, [{ pathname: '/complete', search: '?itemId=' + preview.id, state: { lostPreview: preview, lostDraft: draft } }]);
+    assert(complete.includes(kind));
+    assert(complete.includes('학생회관 2층'));
+    assert(complete.includes('서버에 저장되지 않은 미리보기'));
+    assert(!complete.includes('무선 이어폰'));
+    assert(!complete.includes('등록이 완료됐어요'));
+    const data = await matchingService.getCandidates(preview.id);
+    assert.equal(data.lostItem.name, kind);
+    assert.equal(data.candidates.length, 0);
+    const candidates = render(MatchingCandidatesView, { data, onBack: () => {} });
+    assert(candidates.includes(kind));
+    assert(candidates.includes('후보 0건'));
+    assert(candidates.includes('서버 연결 후 매칭 결과를 확인할 수 있어요.'));
+    assert(!candidates.includes('무선 이어폰'));
+    assert(!candidates.includes('href="/matches/1"'));
+    const registration = await myRegistrationService.getStatus(preview.id);
+    assert.equal(registration.name, kind);
+    assert.equal(getRegistrationBadge(registration).label, '등록 미리보기');
+    assert(getRegistrationDestination(registration).to.includes(preview.id));
+    preview.name = '외부에서 바꾼 이름';
+    assert.equal((await matchingService.getCandidates(preview.id)).lostItem.name, kind);
+  }
+  const empty = createLostItemSummary({ kind: '카메라', date: '2026-11-18' });
+  assert.equal(empty.brand, '미입력');
+  assert.equal(empty.place, '미입력');
+  assert.equal(empty.material, '미입력');
+  const inferred = createLostItemSummary({}, { category: '카메라', brand: 'Canon', color: '검정색', material: '플라스틱' });
+  assert.equal(inferred.name, '카메라');
+  assert.equal(inferred.brand, 'Canon');
+  store.restoreLostRegistrationPreview({ ...store.getLostRegistrationPreviews()[0], id: 'preview-lost-restored' });
+  assert.equal((await matchingService.getCandidates('preview-lost-restored')).lostItem.name, '카메라');
+  const overview = await myRegistrationService.getOngoing();
+  assert(overview.some((item) => item.name === '카메라' && item.isPreview));
+  assert.equal((await myRegistrationService.summary()).lost, 6);
+  await assert.rejects(() => matchingService.getCandidates('preview-lost-missing'), /분실물을 찾을 수 없어요/);
+  console.log('PASS: camera/tumbler/wallet input → summary → completion preview → matching/My Page; selected name, place, color, date, brand and photo preserved; missing values stay missing; no unrelated earbud candidates or API requests.');
+} finally {
+  globalThis.fetch = originalFetch;
+  await server.close();
+}

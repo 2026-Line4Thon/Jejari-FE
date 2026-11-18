@@ -1,4 +1,6 @@
 import { createMockChatRooms, createCandidateChat, mockReturnMeeting } from '../mocks/chatRooms';
+import { apiEnabled } from '../api/config';
+import { apiChatService } from './apiChatService';
 
 // These are UI models, not assumed server DTOs. Replace this mock adapter with
 // HTTP calls and response mapping when the backend contracts are available.
@@ -31,7 +33,7 @@ function deliverMockReply(room) {
   notify();
 }
 
-export const chatService = {
+const mockChatService = {
   // The supplied specification has no chat-list endpoint yet.
   // Keep list/filter/read state behind this boundary; do not invent requests.
   async getChats({ unreadOnly = false } = {}) {
@@ -109,3 +111,5 @@ export const chatService = {
     return publicRoom(room);
   },
 };
+
+export const chatService = apiEnabled ? apiChatService : mockChatService;

@@ -18,7 +18,7 @@ export function ChatMeetingCard({ meeting, onComplete, isPending }) {
 
 export function ChatRoomView({ room, message, onMessage, onSend, onComplete, onBack, isPending = false, actionError = '', endRef }) {
   const completed = room.status === 'completed';
-  const itemSummary = <><ChatPhoto photo={room.item.photo} /><span><strong>{room.item.name}</strong><small>{room.item.place} 습득</small></span>{room.candidateId && <img className="chat-item-chevron" src={chatAssets.chevron} alt="" />}</>;
+  const itemSummary = <><ChatPhoto photo={room.item.photo} /><span><strong>{room.item.name}</strong><small>{room.item.place ? room.item.place + ' 습득' : '습득물 반환 협의'}</small></span>{room.candidateId && <img className="chat-item-chevron" src={chatAssets.chevron} alt="" />}</>;
   return <ChatLayout className="private-chat-page" onBack={onBack}>
     {room.candidateId ? <Link className="chat-item-summary" to={candidatePath(room.candidateId)} aria-label={room.item.name + ' 상세 보기'}>{itemSummary}</Link> : <div className="chat-item-summary">{itemSummary}</div>}
     <section className="chat-timeline" aria-label="채팅 내역">
@@ -26,7 +26,7 @@ export function ChatRoomView({ room, message, onMessage, onSend, onComplete, onB
       <div className="chat-messages" role="log" aria-live="polite" aria-relevant="additions text">
         {room.messages.map((entry) => <p key={entry.id} className={'chat-message is-' + entry.sender + (entry.sender === 'me' && entry.text.length <= 20 ? ' is-short' : '')}>{entry.sender !== 'system' && <span className="chat-sr-only">{entry.sender === 'me' ? '나: ' : '상대방: '}</span>}{entry.text}</p>)}
       </div>
-      {room.meeting && !completed && <ChatMeetingCard meeting={room.meeting} onComplete={onComplete} isPending={isPending} />}
+      {(room.meeting || room.canComplete) && !completed && <ChatMeetingCard meeting={room.meeting ?? { place: '채팅 내용에서 확인해 주세요', timeLabel: '채팅 내용에서 확인해 주세요' }} onComplete={onComplete} isPending={isPending} />}
       {completed && <p className="chat-completed-note">반환이 완료됐어요. <Link to={chatCompletePath(room.id)}>반환 완료 확인하기</Link></p>}
       {actionError && <p className="chat-action-error" role="alert">{actionError}</p>}
       <div ref={endRef} />

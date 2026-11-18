@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import useItemPhotos from '../../hooks/useFoundPhotos';
 import { openInputPicker } from '../../utils/openInputPicker';
+import { apiEnabled } from '../../api/config';
 import './LostItemFormPage.css';
 import pageBackground from '../../assets/lost-form-new/background.svg';
 import progress from '../../assets/lost-method/progress.svg';
@@ -88,7 +89,7 @@ export default function LostItemFormPage() {
       <div className="lost-new-field brand"><strong>브랜드 <em>선택</em></strong><FormInput label="브랜드" name="brand" value={draft.brand} onChange={updateField} /></div>
       <div className="lost-new-field place"><strong>분실 장소</strong><FormInput label="분실 장소" name="place" value={draft.place} onChange={updateField} placeholder="장소를 입력해 주세요" required /></div>
       <div className="lost-new-field date"><strong>마지막 확인 날짜</strong><FormInput className="short" label="마지막 확인 날짜" type="date" name="date" value={draft.date} onChange={updateField} required /></div>
-      <div className="lost-new-field time"><strong>시간 <em>선택</em></strong><FormInput className="short" label="시간" type="time" name="time" value={draft.time} onChange={updateField} /></div>
+      <div className="lost-new-field time"><strong>시간 <em>{apiEnabled ? '필수' : '선택'}</em></strong><FormInput className="short" label="시간" type="time" name="time" value={draft.time} onChange={updateField} required={apiEnabled} /></div>
       <div className="lost-new-field detail"><strong>특징 및 상세 설명 <em>{isTextMode ? '선택' : ''}</em></strong><label className="lost-new-textarea"><img src={isTextMode ? textModeTextarea : textAreaSurface} alt="" /><input aria-label="특징 및 상세 설명" name="description" value={draft.description} onChange={updateField} placeholder="기억나는 모양, 흠집 등 상세 특징을 적어 주세요." /></label></div>
       <footer className="lost-new-footer"><button type="submit" disabled={isReading}><img src={buttonSurface} alt="" /><span>다음 · AI와 특징 정리하기</span></button></footer>
     </form>

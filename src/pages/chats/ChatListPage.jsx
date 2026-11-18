@@ -13,7 +13,7 @@ export function ChatListView({ rooms, filter, onFilter, onBack, isLoading = fals
       <ChatFeedback isLoading={isLoading} error={error}>
         {rooms?.length ? <ul className="chat-room-list">{rooms.map((room) => <li key={room.id}><Link to={chatRoomPath(room.id)}>
           <ChatPhoto photo={room.item.photo} />
-          <span className="chat-room-summary"><strong>{room.item.name}</strong><small>{room.status === 'completed' ? '반환 완료' : room.item.place + ' 습득'}</small></span>
+          <span className="chat-room-summary"><strong>{room.item.name}</strong><small>{room.status === 'completed' ? '반환 완료' : room.item.place ? room.item.place + ' 습득' : '반환 협의 중'}</small></span>
           <time>{room.updatedLabel}</time>
           {room.unread && <span className="chat-sr-only">읽지 않은 메시지 있음</span>}
         </Link></li>)}</ul> : <p className="chat-empty">{filter === 'unread' ? '읽지 않은 채팅이 없어요.' : '아직 시작한 채팅이 없어요.'}</p>}

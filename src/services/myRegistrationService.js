@@ -1,10 +1,15 @@
 import { mockMyRegistrations } from '../mocks/myRegistrations';
 import { matchingService } from './matchingService';
 import { chatService } from './chatService';
+import { apiEnabled } from '../api/config';
+import { apiMyRegistrationService } from './apiMyRegistrationService';
+import { getLostRegistrationPreview, getLostRegistrationPreviews } from '../mocks/lostRegistrationStore';
 
-export const myRegistrationService = {
+const mockMyRegistrationService = {
   // GET /users/me/items/:itemId/status. Replace only this mock adapter later.
   async getStatus(itemId) {
+    const preview = getLostRegistrationPreview(itemId);
+    if (preview) return preview;
     const registration = mockMyRegistrations.find((item) => String(item.id) === String(itemId));
     if (!registration) throw new Error('등록한 물건을 찾을 수 없어요.');
     const item = structuredClone(registration);
@@ -25,6 +30,9 @@ export const myRegistrationService = {
   // GET /users/me/items. Ongoing registrations exclude completed returns.
   async getOngoing() {
     const items = await Promise.all(mockMyRegistrations.map((item) => this.getStatus(item.id)));
-    return items.filter((item) => item.status !== 'completed');
+    return [...getLostRegistrationPreviews(), ...items.filter((item) => item.status !== 'completed')];
   },
+  async summary() { return { lost: 2 + getLostRegistrationPreviews().length, found: 1, completed: 3 }; },
 };
+
+export const myRegistrationService = apiEnabled ? apiMyRegistrationService : mockMyRegistrationService;

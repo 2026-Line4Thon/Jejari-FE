@@ -10,7 +10,7 @@ export function ChatReturnCompleteView({ room, onBack }) {
     <h2>물건이 주인에게<br />돌아갔어요</h2>
     <section className="chat-success-summary" aria-label="반환 완료 물건">
       <ChatPhoto photo={room.item.photo} large />
-      <div><span className="chat-success-badge">반환 완료</span><h3>{room.item.name}</h3><p>{room.item.place} · {room.item.dateLabel}</p></div>
+      <div><span className="chat-success-badge">반환 완료</span><h3>{room.item.name}</h3><p>{[room.item.place, room.item.dateLabel].filter(Boolean).join(' · ')}</p></div>
     </section>
     <Link className="chat-home-button" to="/home">홈으로 돌아가기</Link>
   </ChatLayout>;

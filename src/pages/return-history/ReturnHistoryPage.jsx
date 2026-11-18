@@ -1,4 +1,8 @@
 import { useNavigate } from 'react-router-dom';
+import { useCallback } from 'react';
+import useApiResource from '../../hooks/useApiResource';
+import { apiEnabled } from '../../api/config';
+import { queryService } from '../../services/queryService';
 import './ReturnHistoryPage.css';
 import background from '../../assets/lost-form-new/background.svg';
 import backSurface from '../../assets/recent-found/back.svg';
@@ -15,6 +19,9 @@ const histories = [
 
 export default function ReturnHistoryPage() {
   const navigate = useNavigate();
+  const history = useApiResource(useCallback((signal) => apiEnabled ? queryService.history(signal) : { total: histories.length, items: histories.map((item) => ({ ...item, id: item.name })) }, []));
+  const entries = history.data?.items ?? [];
+  const owned = entries.filter((item) => item.tone === 'found').length;
   return <main className="return-history-page">
     <img className="return-history-bg" src={background} alt="" />
     <header className="return-history-header">
@@ -22,9 +29,9 @@ export default function ReturnHistoryPage() {
       <h1>반환 완료 내역</h1>
     </header>
     <section className="return-history-content">
-      <article className="return-summary"><span>다시 제자리를 찾은 물건</span><strong>총 3건</strong><p>내가 찾은 물건 2 · 찾아준 물건 1</p></article>
+      <article className="return-summary"><span>다시 제자리를 찾은 물건</span><strong>총 {history.data?.total ?? '—'}건</strong><p role={history.error ? 'alert' : 'status'}>{history.error || (history.isLoading ? '반환 내역을 불러오고 있어요.' : `내가 찾은 물건 ${owned} · 찾아준 물건 ${entries.length - owned}`)}</p></article>
       <h2>전체 반환 내역</h2>
-      {histories.map((history) => <article className="return-card" key={history.name}>
+      {entries.map((history) => <article className="return-card" key={history.id}>
         <div className={`return-photo${history.blurred ? ' blurred' : ''}`}><img src={history.image} alt={history.name} />{history.blurred && <small>⌾ 민감정보 블러</small>}</div>
         <div className="return-card-main"><em className={history.tone}>{history.label}</em><strong>{history.name}</strong><span>{history.date}</span></div>
         <div className="return-card-bottom"><strong>{history.place}</strong><span>{history.method}</span></div>

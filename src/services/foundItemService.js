@@ -1,5 +1,7 @@
 import { createMockFoundAnalysis, createMockFoundMatching } from '../mocks/foundItems';
 import { createLocalFoundPhotos } from './foundPhotoStore';
+import { apiEnabled } from '../api/config';
+import { registrationService } from './registrationService';
 
 function waitForAnalysis(signal) {
   return new Promise((resolve, reject) => {
@@ -25,6 +27,7 @@ export const foundItemService = {
     return createLocalFoundPhotos(files, origin);
   },
   async analyze(foundDraft, { signal } = {}) {
+    if (apiEnabled) return registrationService.analyzeFound(foundDraft, { signal });
     if (!foundDraft?.photos?.length) throw new Error('분석할 사진을 먼저 선택해 주세요.');
     await waitForAnalysis(signal);
     return { ...createMockFoundAnalysis(), privacyProtected: foundDraft.photos[0].privacyProtected === true };
@@ -32,12 +35,17 @@ export const foundItemService = {
   // Finder-facing candidate-list endpoint is not in the supplied API catalog.
   // Keep this mock boundary until its request/response contract is defined.
   async getMatchingResults(foundItem) {
+    if (apiEnabled) throw new Error('습득자 측 매칭 후보 조회 API가 명세에 아직 없어요. 마이페이지에서 등록 상태를 확인해 주세요.');
     return createMockFoundMatching(foundItem);
   },
   // GET /candidates/:candidateId: map the eventual response into this public UI model.
   async getMatchingCandidate(candidateId) {
+    if (apiEnabled) throw new Error('습득자 측 후보 상세 조회 API가 명세에 아직 없어요.');
     const candidate = createMockFoundMatching().candidates.find((item) => item.id === candidateId);
     if (!candidate) throw new Error('매칭 후보를 찾을 수 없어요. 다른 후보를 확인해 주세요.');
     return candidate;
+  },
+  async register(item) {
+    return apiEnabled ? registrationService.registerFound(item) : { ...item, id: item.id ?? 'mock-found-1' };
   },
 };

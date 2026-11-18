@@ -18,7 +18,7 @@ export default function FoundAnalyzingPage() {
   useEffect(() => {
     if (!analysis) return;
     const photo = foundDraft.photos[0];
-    const foundItem = { ...analysis, photo: photo.source, photoChanged: !photo.isSample, foundDraft };
+    const foundItem = { ...analysis, photo: analysis.photo ?? photo.source, photoChanged: !photo.isSample, foundDraft };
     window.scrollTo(0, 0);
     navigate('/found-analysis', { replace: true, state: { foundItem } });
   }, [analysis, foundDraft, navigate]);

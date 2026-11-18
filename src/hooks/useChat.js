@@ -1,23 +1,28 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { chatService } from '../services/chatService';
+import { apiEnabled } from '../api/config';
 
 function useChatResource(load) {
   const [result, setResult] = useState(null);
   useEffect(() => {
     let active = true;
     let request = 0;
+    let refreshing = false;
     const refresh = async () => {
+      if (refreshing) return;
+      refreshing = true;
       const current = ++request;
       try {
         const data = await load();
         if (active && current === request) setResult({ load, data, error: '' });
       } catch (error) {
         if (active && current === request) setResult({ load, data: null, error: error.message || '채팅 정보를 불러오지 못했어요.' });
-      }
+      } finally { refreshing = false; }
     };
     const unsubscribe = chatService.subscribe(refresh);
     refresh();
-    return () => { active = false; unsubscribe(); };
+    const timer = apiEnabled ? setInterval(refresh, 5000) : null;
+    return () => { active = false; unsubscribe(); clearInterval(timer); };
   }, [load]);
   const current = result?.load === load ? result : null;
   return { data: current?.data ?? null, error: current?.error ?? '', isLoading: !current };

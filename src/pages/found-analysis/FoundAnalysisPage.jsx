@@ -5,6 +5,8 @@ import { FoundItemHeader, FoundItemProgress } from '../../components/found-item/
 import FoundItemPhoto from '../../components/found-item/FoundItemPhoto';
 import useFoundPhotos from '../../hooks/useFoundPhotos';
 import { createMockFoundItem } from '../../mocks/foundItems';
+import { foundItemService } from '../../services/foundItemService';
+import { apiEnabled } from '../../api/config';
 import lock from '../../assets/found-analysis/lock.svg';
 import edit from '../../assets/found-analysis/edit.svg';
 
@@ -29,10 +31,14 @@ export default function FoundAnalysisPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [item, setItem] = useState(() => {
-    if (location.state?.foundItem) return { ...createMockFoundItem(), ...location.state.foundItem };
+    const empty = apiEnabled ? { kind: '', color: '', brand: '', appearance: '', privateFeature: '', photo: '', privacyProtected: false } : createMockFoundItem();
+    if (location.state?.foundItem) return { ...empty, ...location.state.foundItem };
     const foundDraft = location.state?.foundDraft;
-    return { ...createMockFoundItem(), foundDraft };
+    return { ...empty, foundDraft };
   });
+  const [registerError, setRegisterError] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
+  const registering = useRef(false);
   const { error: photoError, isLoading: isReadingPhoto, selectPhotos } = useFoundPhotos();
   const privateInput = useRef(null);
   const photoInput = useRef(null);
@@ -49,19 +55,27 @@ export default function FoundAnalysisPage() {
     if (!photos) return;
     const photo = photos[0];
     setItem((current) => ({
-      ...current, photo: photo.source, photoChanged: !photo.isSample, privacyProtected: photo.privacyProtected ?? false,
+      ...current, imageId: null, photo: photo.source, photoChanged: !photo.isSample, privacyProtected: photo.privacyProtected ?? false,
       foundDraft: current.foundDraft ? { ...current.foundDraft, photos } : undefined,
     }));
   };
 
-  const registerItem = (event) => {
+  const registerItem = async (event) => {
     event.preventDefault();
+    if (registering.current) return;
+    registering.current = true;
+    setIsRegistering(true);
+    setRegisterError('');
     const foundItem = { ...item };
     for (const name of ['kind', 'color', 'brand', 'appearance', 'privateFeature']) {
       foundItem[name] = foundItem[name].trim();
     }
-    window.scrollTo(0, 0);
-    navigate('/found-complete', { state: { foundItem } });
+    try {
+      const registered = await foundItemService.register(foundItem);
+      window.scrollTo(0, 0);
+      navigate('/found-complete', { state: { foundItem: registered } });
+    } catch (error) { setRegisterError(error.message); }
+    finally { registering.current = false; setIsRegistering(false); }
   };
 
   return (
@@ -79,7 +93,7 @@ export default function FoundAnalysisPage() {
           <span className="found-analysis-label">사진</span>
           <FoundItemPhoto variant="analysis" source={item.photo} name={item.photoChanged ? '선택한 습득물 사진' : '검정색 무선 이어폰'} isSample={!item.photoChanged} privacyProtected={item.privacyProtected} onChange={() => photoInput.current?.click()} disabled={isReadingPhoto} />
           <input ref={photoInput} type="file" accept="image/*" hidden aria-label="습득물 사진 변경" onChange={changePhoto} disabled={isReadingPhoto} />
-          {photoError && <p className="found-analysis-photo-error" role="alert">{photoError}</p>}
+          {(photoError || registerError) && <p className="found-analysis-photo-error" role="alert">{photoError || registerError}</p>}
         </div>
 
         <div className="found-analysis-field-row">
@@ -98,7 +112,7 @@ export default function FoundAnalysisPage() {
           </div>
         </div>
 
-        <button className="found-analysis-submit" type="submit" disabled={isReadingPhoto}>이 정보로 등록하기</button>
+        <button className="found-analysis-submit" type="submit" disabled={isReadingPhoto || isRegistering}>{isRegistering ? '등록 중이에요' : '이 정보로 등록하기'}</button>
       </form>
     </main>
   );

@@ -4,6 +4,7 @@ import { FoundItemHeader } from '../../components/found-item/FoundItemLayout';
 import { foundMatchingListPath } from '../../components/found-matching/foundMatchingRoutes';
 import { formatFoundDate } from '../../utils/formatFoundDate';
 import { createMockFoundRegistration } from '../../mocks/foundItems';
+import { apiEnabled } from '../../api/config';
 import successGlow from '../../assets/found-complete/success-glow.svg';
 import successCheck from '../../assets/complete/check.svg';
 import editIcon from '../../assets/found-complete/edit.svg';
@@ -18,19 +19,22 @@ import './FoundRegistrationCompletePage.css';
 export default function FoundRegistrationCompletePage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [editError, setEditError] = useState('');
   const [item] = useState(() => {
-    const mock = createMockFoundRegistration();
+    const mock = apiEnabled ? { foundDraft: {} } : createMockFoundRegistration();
     const incoming = location.state?.foundItem;
     return incoming ? { ...mock, ...incoming, foundDraft: incoming.foundDraft ?? mock.foundDraft } : mock;
   });
   const detail = [item.foundDraft.place, formatFoundDate(item.foundDraft.date)].filter(Boolean).join(' · ');
 
   const editItem = () => {
+    if (apiEnabled) { setEditError('등록 후 정보 수정 API는 명세에 아직 없어요. 마이페이지에서 등록 내역을 확인해 주세요.'); return; }
     window.scrollTo(0, 0);
     navigate('/found-analysis', { state: { foundItem: item } });
   };
   const goHome = () => { window.scrollTo(0, 0); navigate('/home'); };
   const openResults = () => navigate(foundMatchingListPath, { state: { foundItem: item } });
+  if (apiEnabled && !item.id) return <main className="found-item-page found-completion-page"><FoundItemHeader title="습득물 등록 완료" onBack={() => navigate('/found-item')} /><p className="found-item-error" role="alert">완료된 등록 정보가 없어요. 먼저 습득물을 등록해 주세요.</p></main>;
 
   return (
     <main className="found-item-page found-completion-page" aria-labelledby="found-completion-title">
@@ -38,7 +42,7 @@ export default function FoundRegistrationCompletePage() {
       <section className="found-completion-hero" aria-labelledby="found-completion-message">
         <div className="found-completion-mark" aria-hidden="true"><img src={successGlow} alt="" /><img src={successCheck} alt="" /></div>
         <h2 id="found-completion-message">등록이 완료됐어요</h2>
-        <p>주인을 찾을 수 있도록 자동 매칭을 시작했어요.</p>
+        <p role={editError ? 'alert' : undefined}>{editError || '주인을 찾을 수 있도록 자동 매칭을 시작했어요.'}</p>
       </section>
 
       <article className="found-completion-summary" aria-label="등록한 습득물">

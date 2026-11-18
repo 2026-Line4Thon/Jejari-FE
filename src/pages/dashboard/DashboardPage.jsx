@@ -1,4 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useCallback } from 'react';
+import useApiResource from '../../hooks/useApiResource';
+import { apiEnabled } from '../../api/config';
+import { queryService } from '../../services/queryService';
 import './DashboardPage.css';
 import background from '../../assets/dashboard-new/background.svg';
 import headerSurface from '../../assets/dashboard-new/header.svg';
@@ -34,6 +38,8 @@ const items = [
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const dashboard = useApiResource(useCallback((signal) => apiEnabled ? queryService.home(signal) : { nickname: '멋사', matchingCount: 3, matchingPath: '/matches', items }, []));
+  const recentItems = dashboard.data?.items ?? [];
 
   return (
     <main className="new-dashboard-page" aria-label="홈">
@@ -45,7 +51,7 @@ export default function DashboardPage() {
       </header>
 
       <section className="dashboard-main-content">
-        <p className="dashboard-greeting">안녕하세요, 멋사님</p>
+        <p className="dashboard-greeting">{dashboard.data?.nickname ? `안녕하세요, ${dashboard.data.nickname}님` : '안녕하세요'}</p>
         <h1>무엇을 도와드릴까요?</h1>
 
         <div className="quick-actions">
@@ -63,20 +69,20 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        <Link className="matching-status" to="/matches">
+        <Link className="matching-status" to={dashboard.data?.matchingPath ?? '/mypage'}>
           <img className="status-surface" src={statusCard} alt="" />
           <div className="status-copy">
             <div><img className="status-pulse" src={pulse} alt="" /><strong>내 매칭 현황</strong></div>
-            <p>무선 이어폰 · 후보 3개 발견</p>
+            <p role={dashboard.error ? 'alert' : 'status'}>{dashboard.error || (dashboard.isLoading ? '매칭 정보를 확인하고 있어요' : apiEnabled ? `매칭 후보 ${dashboard.data.matchingCount}건` : '무선 이어폰 · 후보 3개 발견')}</p>
           </div>
-          <img className="match-count" src={count} alt="" /><b>3건</b>
+          <img className="match-count" src={count} alt="" /><b>{dashboard.data?.matchingCount ?? '—'}건</b>
         </Link>
 
         <section className="recent-items" aria-labelledby="recent-title">
           <div className="recent-heading"><h2 id="recent-title">최근 등록된 분실물</h2><button type="button" onClick={() => navigate('/find')}>전체보기</button></div>
           <div className="item-grid">
-            {items.map((item) => (
-              <article className="recent-item" key={item.name}>
+            {recentItems.map((item) => (
+              <article className="recent-item" key={item.id ?? item.name}>
                 <div className="recent-photo">
                   <img className="placeholder" src={placeholder} alt="" />
                   <img className={item.private ? 'item-photo is-private' : 'item-photo'} src={item.image} alt="" />
