@@ -1,9 +1,20 @@
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { chatRoomPath } from '../../components/chat/chatRoutes';
 import { useReturnConnection } from '../../hooks/useMatchingFlow';
 import { MatchingLayout, MatchingLoadState, ReturnPeople, ReturnChatIcon } from '../../components/matching-flow/MatchingLayout';
 import { matchingAssets } from '../../components/matching-flow/matchingAssets';
 import { matchingListPath, ownershipPath } from '../../components/matching-flow/matchingRoutes';
+
+async function readResponseData(response) {
+  const text = await response.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text);
+  } catch {
+    return {};
+  }
+}
 
 export function ReturnConnectionView({ data, onBack, onStartChat, isPending = false, children }) {
   const verified = data.verification.status === 'verified';
@@ -23,14 +34,64 @@ export default function ReturnConnectionPage() {
   const { candidateId } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const chat = useReturnConnection(candidateId, searchParams.get('checkId'));
+  const checkId = searchParams.get('checkId');
+  const chat = useReturnConnection(candidateId, checkId);
+  const [isCreatingChat, setIsCreatingChat] = useState(false);
+  const [createChatError, setCreateChatError] = useState('');
+  const [ownershipResult, setOwnershipResult] = useState(null);
+  const [ownershipResultError, setOwnershipResultError] = useState('');
+  useEffect(() => {
+    const numericCheckId = Number(checkId);
+    if (!Number.isInteger(numericCheckId) || numericCheckId <= 0) return;
+    const controller = new AbortController();
+    const loadOwnershipResult = async () => {
+      setOwnershipResultError('');
+      try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) throw new Error('로그인 후 소유권 확인 결과를 불러올 수 있어요.');
+        const response = await fetch(`https://miseno.store/ownership-checks/${numericCheckId}`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          signal: controller.signal,
+        });
+        const data = await readResponseData(response);
+        if (!response.ok) throw new Error(data.detail || '소유권 확인 결과를 불러오지 못했어요.');
+        setOwnershipResult(data);
+      } catch (error) {
+        if (error.name !== 'AbortError') setOwnershipResultError(error.message || '소유권 확인 결과를 불러오지 못했어요.');
+      }
+    };
+    loadOwnershipResult();
+    return () => controller.abort();
+  }, [checkId]);
   const onBack = () => navigate(ownershipPath(candidateId));
   const onStartChat = async () => {
-    const room = await chat.startChat();
-    if (room) navigate(chatRoomPath(room.id));
+    if (isCreatingChat) return;
+    setIsCreatingChat(true);
+    setCreateChatError('');
+    try {
+      const accessToken = localStorage.getItem('access_token');
+      if (!accessToken) throw new Error('로그인 후 채팅을 시작할 수 있어요.');
+      const response = await fetch('https://miseno.store/chats', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ candidate_id: Number(candidateId) }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.detail || '채팅방을 만들지 못했어요.');
+      navigate(chatRoomPath(data.chat_room_id));
+    } catch (error) {
+      setCreateChatError(error.message || '채팅방을 만들지 못했어요.');
+    } finally {
+      setIsCreatingChat(false);
+    }
   };
   if (chat.isLoading || chat.error) return <MatchingLoadState title="반환 연결" error={chat.error} onBack={() => navigate(matchingListPath)} />;
-  return <ReturnConnectionView data={chat.data} onBack={onBack} onStartChat={onStartChat} isPending={chat.isPending}>
-    {chat.actionError && <p className="found-item-error" role="alert">{chat.actionError}</p>}
+  const isVerified = ['verified', 'pass', 'passed', 'success', 'matched'].includes(String(ownershipResult?.result ?? '').toLowerCase());
+  const data = ownershipResult ? { ...chat.data, verification: { ...chat.data.verification, status: isVerified ? 'verified' : 'unverified' } } : chat.data;
+  return <ReturnConnectionView data={data} onBack={onBack} onStartChat={onStartChat} isPending={chat.isPending || isCreatingChat}>
+    {(chat.actionError || createChatError || ownershipResultError) && <p className="found-item-error" role="alert">{chat.actionError || createChatError || ownershipResultError}</p>}
   </ReturnConnectionView>;
 }

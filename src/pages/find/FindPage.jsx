@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './FindPage.css';
 import pageBackground from '../../assets/login/login-bg.svg';
@@ -31,6 +32,16 @@ const foundItems = [
 
 export default function FindPage() {
   const navigate = useNavigate();
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) return;
+    fetch('https://miseno.store/items/found', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }).catch(() => {
+      // 이 API는 응답 본문이 없어, 요청 실패 시에도 기존 목록 화면을 유지합니다.
+    });
+  }, []);
+
   return (
     <main className="recent-found-page" aria-labelledby="recent-found-title">
       <img className="recent-found-background" src={pageBackground} alt="" />
@@ -51,7 +62,7 @@ export default function FindPage() {
           ))}
         </div>
       </section>
-      <nav className="recent-found-nav" aria-label="주 메뉴"><img className="recent-found-nav-surface" src={navSurface} alt="" /><a href="/home"><img src={navHome} alt="" /><span>홈</span></a><a href="/notify"><img src={navChat} alt="" /><span>채팅</span></a><a href="/mypage"><img src={navMy} alt="" /><span>마이</span></a></nav>
+      <nav className="recent-found-nav" aria-label="주 메뉴"><img className="recent-found-nav-surface" src={navSurface} alt="" /><a href="/home"><img src={navHome} alt="" /><span>홈</span></a><a href="/chats"><img src={navChat} alt="" /><span>채팅</span></a><a href="/mypage"><img src={navMy} alt="" /><span>마이</span></a></nav>
     </main>
   );
 }

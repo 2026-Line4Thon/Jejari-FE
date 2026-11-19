@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './DashboardPage.css';
 import background from '../../assets/dashboard-new/background.svg';
@@ -26,7 +27,7 @@ import photoOne from '../../assets/dashboard-new/photo-1.png';
 import photoTwo from '../../assets/dashboard-new/photo-2.png';
 import photoThree from '../../assets/dashboard-new/photo-3.png';
 
-const items = [
+const defaultItems = [
   { name: '텀블러', place: '중앙도서관 1층', image: photoOne },
   { name: '카드지갑', place: '학생회관 2층', image: photoTwo, private: true },
   { name: '카키색 우산', place: '공학관 A동', image: photoThree },
@@ -34,6 +35,24 @@ const items = [
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const myMatchingCount = 3;
+  const items = defaultItems;
+
+  useEffect(() => {
+    const loadHome = async () => {
+      try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) return;
+        const response = await fetch('https://miseno.store/home', {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (!response.ok) throw new Error('홈 정보를 불러오지 못했습니다.');
+      } catch {
+        // 홈 접근 확인 요청이 실패해도 기존 홈 화면은 유지합니다.
+      }
+    };
+    loadHome();
+  }, []);
 
   return (
     <main className="new-dashboard-page" aria-label="홈">
@@ -67,16 +86,16 @@ export default function DashboardPage() {
           <img className="status-surface" src={statusCard} alt="" />
           <div className="status-copy">
             <div><img className="status-pulse" src={pulse} alt="" /><strong>내 매칭 현황</strong></div>
-            <p>무선 이어폰 · 후보 3개 발견</p>
+            <p>내 매칭 후보를 확인해 보세요</p>
           </div>
-          <img className="match-count" src={count} alt="" /><b>3건</b>
+          <img className="match-count" src={count} alt="" /><b>{myMatchingCount}건</b>
         </Link>
 
         <section className="recent-items" aria-labelledby="recent-title">
           <div className="recent-heading"><h2 id="recent-title">최근 등록된 분실물</h2><button type="button" onClick={() => navigate('/find')}>전체보기</button></div>
           <div className="item-grid">
             {items.map((item) => (
-              <article className="recent-item" key={item.name}>
+              <article className="recent-item" key={item.id || item.name}>
                 <div className="recent-photo">
                   <img className="placeholder" src={placeholder} alt="" />
                   <img className={item.private ? 'item-photo is-private' : 'item-photo'} src={item.image} alt="" />
