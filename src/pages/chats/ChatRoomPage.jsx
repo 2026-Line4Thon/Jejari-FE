@@ -1,10 +1,40 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ChatLayout, ChatPhoto, ChatFeedback } from '../../components/chat/ChatLayout';
 import { chatAssets } from '../../components/chat/chatAssets';
 import { chatListPath, chatCompletePath } from '../../components/chat/chatRoutes';
 import { candidatePath } from '../../components/matching-flow/matchingRoutes';
 import { useChatRoom } from '../../hooks/useChat';
+
+function getMessageList(data) {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.messages)) return data.messages;
+  if (Array.isArray(data?.content)) return data.content;
+  if (Array.isArray(data?.results)) return data.results;
+  if (Array.isArray(data?.data)) return data.data;
+  return [];
+}
+
+function toChatMessage(message, index) {
+  const sender = String(message.sender ?? message.sender_type ?? message.role ?? '').toLowerCase();
+  const isMine = message.is_mine === true || message.isMine === true || ['me', 'mine', 'self', 'owner'].includes(sender);
+  const isSystem = ['system', 'notice'].includes(sender);
+  return {
+    id: message.message_id ?? message.id ?? `${index}-${message.created_at ?? ''}`,
+    text: message.content ?? message.message ?? message.text ?? '',
+    sender: isSystem ? 'system' : isMine ? 'me' : 'other',
+  };
+}
+
+async function readResponseData(response) {
+  const text = await response.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text);
+  } catch {
+    return {};
+  }
+}
 
 export function ChatMeetingCard({ meeting, onComplete, isPending }) {
   return <section className="chat-meeting-card" aria-label="반환 장소 및 시간">
@@ -45,13 +75,85 @@ export default function ChatRoomPage() {
   const location = useLocation();
   const onBack = () => navigate(location.state?.returnTo === '/mypage' ? '/mypage' : chatListPath);
   const end = useRef(null);
-  const messageCount = chat.data?.messages.length;
+  const [isCompleting, setIsCompleting] = useState(false);
+  const [completeError, setCompleteError] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  const [sendError, setSendError] = useState('');
+  const [apiMessages, setApiMessages] = useState(null);
+  const [messageLoadError, setMessageLoadError] = useState('');
+  const [messageRefresh, setMessageRefresh] = useState(0);
+  useEffect(() => {
+    const controller = new AbortController();
+    const loadMessages = async () => {
+      setApiMessages(null);
+      setMessageLoadError('');
+      try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) throw new Error('로그인 후 채팅 메시지를 불러올 수 있어요.');
+        const response = await fetch(`https://miseno.store/chats/${roomId}/messages?page=1&size=30`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          signal: controller.signal,
+        });
+        const data = await readResponseData(response);
+        if (!response.ok) throw new Error(data.detail || '채팅 메시지를 불러오지 못했어요.');
+        setApiMessages(getMessageList(data).map(toChatMessage));
+      } catch (error) {
+        if (error.name !== 'AbortError') setMessageLoadError(error.message || '채팅 메시지를 불러오지 못했어요.');
+      }
+    };
+    loadMessages();
+    return () => controller.abort();
+  }, [roomId, messageRefresh]);
+  const room = chat.data && apiMessages !== null ? { ...chat.data, messages: apiMessages } : chat.data;
+  const messageCount = room?.messages.length;
   const hasMeeting = Boolean(chat.data?.meeting);
   useEffect(() => { end.current?.scrollIntoView({ block: 'end' }); }, [messageCount, hasMeeting]);
   const onComplete = async () => {
-    const room = await chat.complete();
-    if (room) navigate(chatCompletePath(room.id));
+    if (isCompleting) return;
+    setIsCompleting(true);
+    setCompleteError('');
+    try {
+      const accessToken = localStorage.getItem('access_token');
+      if (!accessToken) throw new Error('로그인 후 반환 완료 처리를 할 수 있어요.');
+      const response = await fetch(`https://miseno.store/chats/${roomId}/complete`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const data = await readResponseData(response);
+      if (!response.ok) throw new Error(data.detail || '반환 완료 처리에 실패했어요.');
+      navigate(chatCompletePath(roomId));
+    } catch (error) {
+      setCompleteError(error.message || '반환 완료 처리에 실패했어요.');
+    } finally {
+      setIsCompleting(false);
+    }
+  };
+  const onSend = async () => {
+    const content = chat.message.trim();
+    if (!content || isSending) return;
+    setIsSending(true);
+    setSendError('');
+    try {
+      const accessToken = localStorage.getItem('access_token');
+      if (!accessToken) throw new Error('로그인 후 메시지를 보낼 수 있어요.');
+      const response = await fetch(`https://miseno.store/chats/${roomId}/messages`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content }),
+      });
+      const data = await readResponseData(response);
+      if (!response.ok) throw new Error(data.detail || '메시지 전송에 실패했어요.');
+      chat.setMessage('');
+      setMessageRefresh((count) => count + 1);
+    } catch (error) {
+      setSendError(error.message || '메시지 전송에 실패했어요.');
+    } finally {
+      setIsSending(false);
+    }
   };
   if (chat.isLoading || chat.error) return <ChatLayout className="private-chat-page" onBack={onBack}><ChatFeedback isLoading={chat.isLoading} error={chat.error} /></ChatLayout>;
-  return <ChatRoomView room={chat.data} message={chat.message} onMessage={chat.setMessage} onSend={chat.sendMessage} onComplete={onComplete} onBack={onBack} isPending={chat.isPending} actionError={chat.actionError} endRef={end} />;
+  return <ChatRoomView room={room} message={chat.message} onMessage={chat.setMessage} onSend={onSend} onComplete={onComplete} onBack={onBack} isPending={chat.isPending || isCompleting || isSending} actionError={chat.actionError || completeError || sendError || messageLoadError} endRef={end} />;
 }

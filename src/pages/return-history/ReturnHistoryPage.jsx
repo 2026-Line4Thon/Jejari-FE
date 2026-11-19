@@ -1,20 +1,48 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ReturnHistoryPage.css';
 import background from '../../assets/lost-form-new/background.svg';
 import backSurface from '../../assets/recent-found/back.svg';
 import backArrow from '../../assets/recent-found/back-arrow.svg';
-import tumbler from '../../assets/return-history/item-1.png';
-import umbrella from '../../assets/return-history/item-2.png';
-import card from '../../assets/return-history/item-3.png';
 
-const histories = [
-  { image: tumbler, label: '찾았어요', tone: 'found', name: '텀블러', date: '3월 14일 반환 완료', place: '중앙도서관 1층 로비', method: '직접 전달 · 수령 확인 완료' },
-  { image: card, label: '찾아줬어요', tone: 'returned', name: '체크카드', date: '3월 10일 반환 완료', place: '학생회관 2층 안내데스크', method: '보관소 전달 · 수령 확인 완료', blurred: true },
-  { image: umbrella, label: '찾았어요', tone: 'found', name: '필통', date: '3월 3일 반환 완료', place: '공학관 A동 1층 입구', method: '직접 전달 · 수령 확인 완료' },
-];
+function formatCompletedAt(value) {
+  if (!value) return '반환 완료';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '반환 완료';
+  return new Intl.DateTimeFormat('ko-KR', { month: 'long', day: 'numeric' }).format(date) + ' 반환 완료';
+}
+
+function isFinder(role) {
+  return String(role || '').toLowerCase().includes('found');
+}
 
 export default function ReturnHistoryPage() {
   const navigate = useNavigate();
+  const [histories, setHistories] = useState([]);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    let active = true;
+    const loadHistories = async () => {
+      try {
+        const accessToken = localStorage.getItem('access_token');
+        if (!accessToken) throw new Error('로그인 후 반환 완료 내역을 확인할 수 있어요.');
+        const response = await fetch('https://miseno.store/users/me/history', {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || '반환 완료 내역을 불러오지 못했어요.');
+        if (active) setHistories(Array.isArray(data) ? data : []);
+      } catch (loadError) {
+        if (active) setError(loadError.message || '반환 완료 내역을 불러오지 못했어요.');
+      } finally {
+        if (active) setIsLoading(false);
+      }
+    };
+    loadHistories();
+    return () => { active = false; };
+  }, []);
+  const foundCount = histories.filter((history) => isFinder(history.role)).length;
   return <main className="return-history-page">
     <img className="return-history-bg" src={background} alt="" />
     <header className="return-history-header">
@@ -22,13 +50,19 @@ export default function ReturnHistoryPage() {
       <h1>반환 완료 내역</h1>
     </header>
     <section className="return-history-content">
-      <article className="return-summary"><span>다시 제자리를 찾은 물건</span><strong>총 3건</strong><p>내가 찾은 물건 2 · 찾아준 물건 1</p></article>
+      <article className="return-summary"><span>다시 제자리를 찾은 물건</span><strong>총 {histories.length}건</strong><p>내가 찾은 물건 {histories.length - foundCount} · 찾아준 물건 {foundCount}</p></article>
       <h2>전체 반환 내역</h2>
-      {histories.map((history) => <article className="return-card" key={history.name}>
-        <div className={`return-photo${history.blurred ? ' blurred' : ''}`}><img src={history.image} alt={history.name} />{history.blurred && <small>⌾ 민감정보 블러</small>}</div>
-        <div className="return-card-main"><em className={history.tone}>{history.label}</em><strong>{history.name}</strong><span>{history.date}</span></div>
-        <div className="return-card-bottom"><strong>{history.place}</strong><span>{history.method}</span></div>
-      </article>)}
+      {isLoading && <p className="return-note" role="status">반환 완료 내역을 불러오고 있어요.</p>}
+      {error && <p className="return-note" role="alert">{error}</p>}
+      {!isLoading && !error && !histories.length && <p className="return-note">반환 완료 내역이 없어요.</p>}
+      {histories.map((history) => {
+        const finder = isFinder(history.role);
+        return <article className="return-card" key={history.chat_room_id}>
+          <div className="return-photo blurred"><img src={history.blurred_image_url} alt={history.item_name} /><small>⌾ 민감정보 블러</small></div>
+          <div className="return-card-main"><em className={finder ? 'returned' : 'found'}>{finder ? '찾아줬어요' : '찾았어요'}</em><strong>{history.item_name}</strong><span>{formatCompletedAt(history.completed_at)}</span></div>
+          <div className="return-card-bottom"><strong>반환 완료</strong><span>{history.status || '수령 확인 완료'}</span></div>
+        </article>;
+      })}
       <p className="return-note">완료된 반환 내역은 이 화면에서 모두 확인할 수 있어요.<br />반환이 끝난 물건은 자동 매칭 대상에서 제외돼요.</p>
     </section>
     <button className="return-home-button" onClick={() => navigate('/mypage')}>마이페이지로 이동</button>

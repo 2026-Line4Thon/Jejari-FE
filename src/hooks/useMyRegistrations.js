@@ -2,6 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { myRegistrationService } from '../services/myRegistrationService';
 import { getRegistrationDestination } from '../utils/myRegistrationNavigation';
 
+function normalizeStatus(status) {
+  const value = String(status || '').toLowerCase();
+  if (value.includes('complete')) return 'completed';
+  if (value.includes('return')) return 'returning';
+  if (value.includes('candidate') || value.includes('match')) return value.includes('ing') ? 'matching' : 'candidates';
+  return 'matching';
+}
+
 export default function useMyRegistrations() {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +35,14 @@ export default function useMyRegistrations() {
     setError('');
     try {
       // Recheck the selected registration, rather than routing from stale badge text.
-      const item = await myRegistrationService.getStatus(itemId);
+      const currentItem = items.find((item) => String(item.id) === String(itemId));
+      const status = await myRegistrationService.getStatus(itemId, currentItem?.type);
+      const item = {
+        ...currentItem,
+        status: normalizeStatus(status.status || currentItem?.status),
+        candidateCount: Number(status.candidate_count ?? status.candidates_count ?? currentItem?.candidateCount ?? 0),
+        chatId: status.chat_room_id ?? status.chat_id ?? currentItem?.chatId ?? null,
+      };
       const destination = getRegistrationDestination(item);
       if (!destination) throw new Error('이 등록의 연결 정보를 확인할 수 없어요. 잠시 후 다시 확인해 주세요.');
       return active.current ? destination : null;

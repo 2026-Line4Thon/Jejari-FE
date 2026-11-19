@@ -1,30 +1,60 @@
-import { mockMyRegistrations } from '../mocks/myRegistrations';
-import { matchingService } from './matchingService';
-import { chatService } from './chatService';
+const API_BASE_URL = 'https://miseno.store';
+
+function getAccessToken() {
+  const accessToken = localStorage.getItem('access_token');
+  if (!accessToken) throw new Error('로그인 후 등록 내역을 확인할 수 있어요.');
+  return accessToken;
+}
+
+async function getJson(path) {
+  const response = await fetch(API_BASE_URL + path, {
+    headers: { Authorization: `Bearer ${getAccessToken()}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || '등록 내역을 불러오지 못했어요.');
+  return data;
+}
+
+function normalizeStatus(status) {
+  const value = String(status || '').toLowerCase();
+  if (value.includes('complete')) return 'completed';
+  if (value.includes('return')) return 'returning';
+  if (value.includes('candidate') || value.includes('match')) return value.includes('ing') ? 'matching' : 'candidates';
+  return 'matching';
+}
+
+function mapRegistration(item, detail = {}) {
+  return {
+    id: item.id,
+    type: String(item.item_type || '').toLowerCase(),
+    name: item.item_name || '등록 물품',
+    place: detail.place_name || detail.place?.name || item.status_label || '등록한 물품',
+    status: normalizeStatus(detail.status || item.status),
+    candidateCount: Number(detail.candidate_count ?? detail.candidates_count ?? 0),
+    chatId: detail.chat_room_id ?? detail.chat_id ?? null,
+    photo: { source: item.thumbnail_url || detail.image_url || '', variant: '' },
+  };
+}
 
 export const myRegistrationService = {
-  // GET /users/me/items/:itemId/status. Replace only this mock adapter later.
-  async getStatus(itemId) {
-    const registration = mockMyRegistrations.find((item) => String(item.id) === String(itemId));
-    if (!registration) throw new Error('등록한 물건을 찾을 수 없어요.');
-    const item = structuredClone(registration);
-    if (item.status === 'candidates' || item.status === 'matching') {
-      if (item.type === 'lost') {
-        const result = await matchingService.getCandidates(item.id);
-        if (result.lostItem.id !== item.id || result.lostItem.name !== item.name) throw new Error('선택한 물건의 매칭 정보를 확인해 주세요.');
-        item.candidateCount = result.candidates.length;
-        item.status = item.candidateCount ? 'candidates' : 'matching';
-      }
-    } else if (item.status === 'returning' && item.chatId) {
-      const room = await chatService.getMessages(item.chatId);
-      if (room.itemId !== item.id || room.item.name !== item.name) throw new Error('등록한 물건의 채팅 연결 정보를 확인해 주세요.');
-      if (room.status === 'completed') item.status = 'completed';
-    }
-    return item;
+  async getStatus(itemId, type) {
+    return getJson(`/users/me/items/${itemId}/status?type=${encodeURIComponent(type)}`);
   },
-  // GET /users/me/items. Ongoing registrations exclude completed returns.
+
   async getOngoing() {
-    const items = await Promise.all(mockMyRegistrations.map((item) => this.getStatus(item.id)));
-    return items.filter((item) => item.status !== 'completed');
+    const [lostItems, foundItems] = await Promise.all([
+      getJson('/users/me/items?type=lost'),
+      getJson('/users/me/items?type=found'),
+    ]);
+    const items = [...(Array.isArray(lostItems) ? lostItems : []), ...(Array.isArray(foundItems) ? foundItems : [])];
+    const registrations = await Promise.all(items.map(async (item) => {
+      try {
+        const detail = await this.getStatus(item.id, String(item.item_type || '').toLowerCase());
+        return mapRegistration(item, detail);
+      } catch {
+        return mapRegistration(item);
+      }
+    }));
+    return registrations.filter((item) => item.status !== 'completed');
   },
 };
