@@ -19,10 +19,7 @@ import badge from '../../assets/dashboard-new/badge.svg';
 import badgeIcon from '../../assets/dashboard-new/badge-icon.svg';
 import safety from '../../assets/dashboard-new/safety.svg';
 import safetyIcon from '../../assets/dashboard-new/safety-icon.svg';
-import navSurface from '../../assets/dashboard-new/nav.svg';
-import navHome from '../../assets/home-nav/home-active.svg';
-import navChat from '../../assets/home-nav/chat.svg';
-import navMy from '../../assets/home-nav/my.svg';
+import BottomNavigation from '../../components/navigation/BottomNavigation';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -108,12 +105,7 @@ export default function DashboardPage() {
         <aside className="dashboard-safety"><img className="safety-surface" src={safety} alt="" /><img className="safety-icon" src={safetyIcon} alt="" /><strong>안심하고 이용하세요</strong><p>연락처 공개 없이 앱 안에서 반환할 수 있어요.</p></aside>
       </section>
 
-      <nav className="new-bottom-navigation" aria-label="주 메뉴">
-        <img className="nav-surface" src={navSurface} alt="" />
-        <a className="active" href="/home"><img src={navHome} alt="" /><span>홈</span></a>
-        <button type="button" aria-label="채팅" onClick={() => navigate('/chats')}><img src={navChat} alt="" /><span>채팅</span></button>
-        <a href="/mypage"><img src={navMy} alt="" /><span>마이</span></a>
-      </nav>
+      <BottomNavigation />
     </main>
   );
 }
