@@ -12,6 +12,8 @@ function normalizeStatus(status) {
 
 export default function useMyRegistrations() {
   const [items, setItems] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [statsError, setStatsError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [pendingId, setPendingId] = useState(null);
@@ -20,8 +22,8 @@ export default function useMyRegistrations() {
   useEffect(() => {
     active.current = true;
     let cancelled = false;
-    myRegistrationService.getOngoing().then((data) => {
-      if (!cancelled) setItems(data);
+    myRegistrationService.getOngoing({ includeStats: true }).then((data) => {
+      if (!cancelled) { setItems(data.items); setStats(data.stats); setStatsError(data.statsError); }
     }).catch((loadError) => {
       if (!cancelled) setError(loadError.message);
     }).finally(() => { if (!cancelled) setIsLoading(false); });
@@ -54,5 +56,5 @@ export default function useMyRegistrations() {
       if (active.current) setPendingId(null);
     }
   };
-  return { items, isLoading, error, pendingId, open };
+  return { items, stats, statsError, isLoading, error, pendingId, open };
 }

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './DashboardPage.css';
 import background from '../../assets/dashboard-new/background.svg';
@@ -23,35 +23,32 @@ import navSurface from '../../assets/dashboard-new/nav.svg';
 import navHome from '../../assets/home-nav/home-active.svg';
 import navChat from '../../assets/home-nav/chat.svg';
 import navMy from '../../assets/home-nav/my.svg';
-import photoOne from '../../assets/dashboard-new/photo-1.png';
-import photoTwo from '../../assets/dashboard-new/photo-2.png';
-import photoThree from '../../assets/dashboard-new/photo-3.png';
-
-const defaultItems = [
-  { name: '텀블러', place: '중앙도서관 1층', image: photoOne },
-  { name: '카드지갑', place: '학생회관 2층', image: photoTwo, private: true },
-  { name: '카키색 우산', place: '공학관 A동', image: photoThree },
-];
 
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const myMatchingCount = 3;
-  const items = defaultItems;
+  const [home, setHome] = useState(null);
+  const [error, setError] = useState('');
+  const myMatchingCount = home?.count ?? '—';
+  const items = home?.items || [];
 
   useEffect(() => {
+    let active = true;
     const loadHome = async () => {
       try {
         const accessToken = localStorage.getItem('access_token');
-        if (!accessToken) return;
+        if (!accessToken) throw new Error('로그인 후 홈 정보를 확인할 수 있어요.');
         const response = await fetch('https://miseno.store/home', {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
         if (!response.ok) throw new Error('홈 정보를 불러오지 못했습니다.');
-      } catch {
-        // 홈 접근 확인 요청이 실패해도 기존 홈 화면은 유지합니다.
-      }
+        const data = await response.json();
+        if (!Array.isArray(data?.recent_found_items) || !Number.isInteger(data.my_matching_count) || data.my_matching_count < 0) throw new Error('홈 정보 응답을 확인해 주세요.');
+        const recent = data.recent_found_items.slice(0, 3).map((item) => ({ id: item.id, name: item.item_name || '습득물', place: item.found_location || '', image: item.blurred_image_url || placeholder, private: item.is_blurred === true }));
+        if (active) setHome({ count: data.my_matching_count, items: recent });
+      } catch (failure) { if (active) setError(failure.message); }
     };
     loadHome();
+    return () => { active = false; };
   }, []);
 
   return (
@@ -64,7 +61,7 @@ export default function DashboardPage() {
       </header>
 
       <section className="dashboard-main-content">
-        <p className="dashboard-greeting">안녕하세요, 멋사님</p>
+        <p className="dashboard-greeting">안녕하세요</p>
         <h1>무엇을 도와드릴까요?</h1>
 
         <div className="quick-actions">
@@ -93,6 +90,7 @@ export default function DashboardPage() {
 
         <section className="recent-items" aria-labelledby="recent-title">
           <div className="recent-heading"><h2 id="recent-title">최근 등록된 분실물</h2><button type="button" onClick={() => navigate('/find')}>전체보기</button></div>
+          {(error || !items.length) && <p role={error ? 'alert' : 'status'}>{error || (!home ? '등록된 물건을 불러오고 있어요.' : '아직 등록된 물건이 없어요.')}</p>}
           <div className="item-grid">
             {items.map((item) => (
               <article className="recent-item" key={item.id || item.name}>

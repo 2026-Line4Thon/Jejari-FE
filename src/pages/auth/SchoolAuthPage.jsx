@@ -98,19 +98,21 @@ export default function SchoolAuthPage() {
           <input id="school-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="student@univ.ac.kr" />
         </div>
 
-        <button className="request-code-button" type="button" onClick={sendVerificationCode} disabled={isSending}>
-          <img src={requestCodeSurface} alt="" />
-          <span>{isSending ? '발송 중...' : codeSent ? '인증번호 재발송' : '인증번호 받기'}</span>
-        </button>
-        {requestMessage && <p role="status">{requestMessage}</p>}
+        <div className="verification-fields">
+          <button className="request-code-button" type="button" onClick={sendVerificationCode} disabled={isSending}>
+            <img src={requestCodeSurface} alt="" />
+            <span>{isSending ? '발송 중...' : codeSent ? '인증번호 재발송' : '인증번호 받기'}</span>
+          </button>
+          {requestMessage && <p className="login-request-message" role="status">{requestMessage}</p>}
 
-        <label className="login-label code-label" htmlFor="verification-code">인증번호</label>
-        <div className="surface-field code-field">
-          <img src={codeInputSurface} alt="" />
-          <input id="verification-code" type="text" inputMode="numeric" maxLength="6" value={verificationCode} onChange={(event) => setVerificationCode(event.target.value.replace(/\D/g, ''))} placeholder="6자리 숫자 입력" />
+          <label className="login-label code-label" htmlFor="verification-code">인증번호</label>
+          <div className="surface-field code-field">
+            <img src={codeInputSurface} alt="" />
+            <input id="verification-code" type="text" inputMode="numeric" maxLength="6" value={verificationCode} onChange={(event) => setVerificationCode(event.target.value.replace(/\D/g, ''))} placeholder="6자리 숫자 입력" />
+          </div>
+
+          <p className="login-security-note"><img src={infoIcon} alt="" />인증 정보는 학교 구성원 확인에만 사용돼요.</p>
         </div>
-
-        <p className="login-security-note"><img src={infoIcon} alt="" />인증 정보는 학교 구성원 확인에만 사용돼요.</p>
       </section>
 
       <footer className="school-auth-footer">

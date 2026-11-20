@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import useMyRegistrations from '../../hooks/useMyRegistrations';
 import { getRegistrationBadge } from '../../utils/myRegistrationNavigation';
 import './MyPage.css';
-import background from '../../assets/lost-form-new/background.svg';
+import background from '../../assets/dashboard-new/background.svg';
 import backSurface from '../../assets/recent-found/back.svg';
 import backArrow from '../../assets/recent-found/back-arrow.svg';
 import profileSurface from '../../assets/mypage/profile-surface.svg';
@@ -16,7 +16,7 @@ export default function MyPage() {
   const registrations = useMyRegistrations();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [logoutMessage, setLogoutMessage] = useState('');
-  const [profile, setProfile] = useState({ nickname: '김멋사', email: 'minji@univ.ac.kr', isUniversityVerified: true });
+  const [profile, setProfile] = useState({ nickname: '', email: '', isUniversityVerified: null });
   const [profileError, setProfileError] = useState('');
   useEffect(() => {
     let active = true;
@@ -92,10 +92,11 @@ export default function MyPage() {
     <section>
       <article className="my-profile">
         <i><img src={profileSurface} alt="" /><img src={profileIcon} alt="프로필" /></i>
-        <div><strong>{profile.nickname}</strong><span>{profile.email}</span><em><img src={schoolBadge} alt="" /><b><img src={schoolShield} alt="" />{profile.isUniversityVerified ? '학교 인증 완료' : '학교 인증 필요'}</b></em></div>
+        <div><strong>{profile.nickname || '내 정보'}</strong><span>{profile.email}</span><em><img src={schoolBadge} alt="" /><b><img src={schoolShield} alt="" />{profile.isUniversityVerified === null ? '학교 인증 확인 중' : profile.isUniversityVerified ? '학교 인증 완료' : '학교 인증 필요'}</b></em></div>
       </article>
       {profileError && <p className="my-registration-feedback" role="alert">{profileError}</p>}
-      <article className="my-stats"><div><b>2</b><span>분실물</span></div><div><b>1</b><span>습득물</span></div><div><b>3</b><span>반환 완료</span></div></article>
+      <article className="my-stats"><div><b>{registrations.stats?.lost ?? '—'}</b><span>분실물</span></div><div><b>{registrations.stats?.found ?? '—'}</b><span>습득물</span></div><div><b>{registrations.stats?.completed ?? '—'}</b><span>반환 완료</span></div></article>
+      {registrations.statsError && <p className="my-registration-feedback" role="alert">{registrations.statsError}</p>}
       <h2>진행 중인 등록</h2>
       {registrations.isLoading && <p className="my-registration-feedback" role="status">등록 내역을 불러오고 있어요.</p>}
       {registrations.error && <p className="my-registration-feedback" role="alert">{registrations.error}</p>}

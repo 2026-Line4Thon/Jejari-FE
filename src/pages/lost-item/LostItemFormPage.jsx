@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import useItemPhotos from '../../hooks/useFoundPhotos';
+import PlaceDropdown from '../../components/found-item/PlaceDropdown';
 import { openInputPicker } from '../../utils/openInputPicker';
 import './LostItemFormPage.css';
 import pageBackground from '../../assets/lost-form-new/background.svg';
@@ -38,7 +39,7 @@ export default function LostItemFormPage() {
   const { photos, cover, isLoading: isReading, error: selectionError, selectPhotos } = useItemPhotos(draft.photos);
   const updateField = (event) => {
     const { name, value } = event.target;
-    setDraft((current) => ({ ...current, [name]: value }));
+    setDraft((current) => ({ ...current, [name]: value, ...(name === 'place' ? { placeId: undefined, locationDetail: '' } : {}) }));
   };
   const choosePhotos = (origin) => {
     setIsPhotoPickerOpen(false);
@@ -86,7 +87,7 @@ export default function LostItemFormPage() {
       <div className="lost-new-field kind"><strong>물건 종류</strong><FormInput className="short" label="물건 종류" name="kind" value={draft.kind} onChange={updateField} required /></div>
       <div className="lost-new-field color"><strong>색상</strong><FormInput className="short" label="색상" name="color" value={draft.color} onChange={updateField} required /></div>
       <div className="lost-new-field brand"><strong>브랜드 <em>선택</em></strong><FormInput label="브랜드" name="brand" value={draft.brand} onChange={updateField} /></div>
-      <div className="lost-new-field place"><strong>분실 장소</strong><FormInput label="분실 장소" name="place" value={draft.place} onChange={updateField} placeholder="장소를 입력해 주세요" required /></div>
+      <div className="lost-new-field place"><strong>분실 장소</strong><div className="lost-new-input"><img src={inputSurface} alt="" /><PlaceDropdown label="분실 장소" value={draft.place} onChange={(place) => setDraft((current) => ({ ...current, place, placeId: undefined, locationDetail: '' }))} /></div></div>
       <div className="lost-new-field date"><strong>마지막 확인 날짜</strong><FormInput className="short" label="마지막 확인 날짜" type="date" name="date" value={draft.date} onChange={updateField} required /></div>
       <div className="lost-new-field time"><strong>시간 <em>선택</em></strong><FormInput className="short" label="시간" type="time" name="time" value={draft.time} onChange={updateField} /></div>
       <div className="lost-new-field detail"><strong>특징 및 상세 설명 <em>{isTextMode ? '선택' : ''}</em></strong><label className="lost-new-textarea"><img src={isTextMode ? textModeTextarea : textAreaSurface} alt="" /><input aria-label="특징 및 상세 설명" name="description" value={draft.description} onChange={updateField} placeholder="기억나는 모양, 흠집 등 상세 특징을 적어 주세요." /></label></div>

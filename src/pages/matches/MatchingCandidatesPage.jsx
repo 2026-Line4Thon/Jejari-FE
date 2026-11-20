@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { foundItemService } from '../../services/foundItemService';
+import { matchingService } from '../../services/matchingService';
 import { MatchingLayout, MatchingLoadState, MatchingCandidateCard } from '../../components/matching-flow/MatchingLayout';
 import { matchingAssets } from '../../components/matching-flow/matchingAssets';
 import { candidatePath } from '../../components/matching-flow/matchingRoutes';
@@ -25,16 +27,19 @@ function mapCandidate(candidate) {
   };
 }
 
-export function MatchingCandidatesView({ data, onBack }) {
+export function MatchingCandidatesView({ data, onBack, navigationState }) {
   return <MatchingLayout title="매칭 완료" titleId="matching-list-title" onBack={onBack} className="matching-list-page">
     <section className="matching-source" aria-label="내 분실물"><small>내 분실물</small><h2>{data.lostItem.color} {data.lostItem.name}</h2><p>{data.lostItem.place} · {data.lostItem.dateLabel}</p><span className="matching-count">후보 {data.candidates.length}건</span></section>
     <section className="matching-list-intro"><h2><img src={matchingAssets.jejari} alt="" />{data.candidates.length ? 'Jejari가 찾은 유사한 물건이에요' : '비슷한 물건을 계속 찾고 있어요'}</h2><p>유사도뿐 아니라 장소와 시간도 함께 확인해 주세요.</p></section>
-    {data.candidates.length ? <div className="matching-candidate-list">{data.candidates.map((candidate) => <MatchingCandidateCard key={candidate.id} candidate={candidate} dateLabel={candidate.foundAtLabel} to={candidatePath(candidate.id)} />)}</div> : <div className="matching-empty" role="status"><h3>새로운 후보를 계속 찾고 있어요.</h3><p>비슷한 습득물이 등록되면 다시 알려드릴게요.</p></div>}
+    {data.candidates.length ? <div className="matching-candidate-list">{data.candidates.map((candidate) => <MatchingCandidateCard key={candidate.id} candidate={candidate} dateLabel={candidate.foundAtLabel} to={candidatePath(candidate.id)} state={navigationState} />)}</div> : <div className="matching-empty" role="status"><h3>새로운 후보를 계속 찾고 있어요.</h3><p>비슷한 습득물이 등록되면 다시 알려드릴게요.</p></div>}
   </MatchingLayout>;
 }
 
 export default function MatchingCandidatesPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [params] = useSearchParams();
+  const selectedId = params.get('itemId') || location.state?.lostItemId;
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -42,7 +47,13 @@ export default function MatchingCandidatesPage() {
   useEffect(() => {
     let active = true;
     const loadCandidates = async () => {
+      setIsLoading(true); setError('');
       try {
+        if (selectedId) {
+          const [lostItem, candidatesData] = await Promise.all([foundItemService.getLost(selectedId), matchingService.getCandidates(selectedId)]);
+          if (active) setData({ lostItem: { id: lostItem.lost_item_id, name: lostItem.item_name || '분실물', color: lostItem.color || '', place: [lostItem.place?.name, lostItem.location_detail].filter(Boolean).join(' '), dateLabel: formatDate(lostItem.lost_from) }, candidates: (candidatesData.candidates || []).map(mapCandidate) });
+          return;
+        }
         const accessToken = localStorage.getItem('access_token');
         if (!accessToken) throw new Error('로그인 후 매칭 후보를 확인할 수 있어요.');
 
@@ -71,6 +82,7 @@ export default function MatchingCandidatesPage() {
         if (active) {
           setData({
             lostItem: {
+              id: lostItem.id,
               name: lostItem.item_name || '분실물',
               color: '',
               place: lostItem.status_label || lostItem.status || '등록한 분실물',
@@ -87,9 +99,9 @@ export default function MatchingCandidatesPage() {
     };
     loadCandidates();
     return () => { active = false; };
-  }, []);
+  }, [selectedId]);
 
-  const onBack = () => navigate('/home');
+  const onBack = () => navigate(location.state?.returnTo === '/mypage' ? '/mypage' : '/home');
   if (isLoading || error) return <MatchingLoadState title="매칭 완료" error={error} onBack={onBack} />;
-  return <MatchingCandidatesView data={data} onBack={onBack} />;
+  return <MatchingCandidatesView data={data} onBack={onBack} navigationState={{ ...location.state, lostItemId: data.lostItem.id }} />;
 }

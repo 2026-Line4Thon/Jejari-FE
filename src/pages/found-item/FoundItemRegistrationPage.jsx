@@ -4,6 +4,7 @@ import { FoundItemHeader, FoundItemProgress } from '../../components/found-item/
 import FoundItemPhoto from '../../components/found-item/FoundItemPhoto';
 import PhotoPicker from '../../components/found-item/PhotoPicker';
 import useFoundPhotos from '../../hooks/useFoundPhotos';
+import PlaceDropdown from '../../components/found-item/PlaceDropdown';
 import { openInputPicker } from '../../utils/openInputPicker';
 import uploadIcon from '../../assets/found-registration/upload-icon.svg';
 import './FoundItemRegistrationPage.css';
@@ -21,7 +22,7 @@ export default function FoundItemRegistrationPage() {
 
   const updateField = (event) => {
     const { name, value } = event.target;
-    setDraft((current) => ({ ...current, [name]: value }));
+    setDraft((current) => ({ ...current, [name]: value, ...(name === 'place' ? { placeId: undefined, locationDetail: '' } : {}) }));
   };
 
   const choosePhotos = (origin) => {
@@ -67,7 +68,7 @@ export default function FoundItemRegistrationPage() {
           {photos.length > 1 && <div className="found-registration-thumbnails" aria-label="대표 사진 선택">{photos.map((photo, index) => <button key={photo.id ?? index} type="button" onClick={() => setCoverIndex(index)} aria-label={'사진 ' + (index + 1) + '을 대표 사진으로 선택'} aria-pressed={index === coverIndex}><img src={photo.source} alt="" /></button>)}</div>}
           {(photoError || selectionError) && <p className="found-item-error" id="found-registration-photo-error" role="alert">{photoError || selectionError}</p>}
         </div>
-        <label className="found-registration-field found-registration-place"><span>습득 장소</span><input name="place" value={draft.place} onChange={updateField} required pattern=".*\S.*" title="습득 장소를 입력해 주세요." autoComplete="off" /></label>
+        <div className="found-registration-field found-registration-place"><span>습득 장소</span><PlaceDropdown label="습득 장소" value={draft.place} onChange={(place) => setDraft((current) => ({ ...current, place, placeId: undefined, locationDetail: '' }))} /></div>
         <div className="found-registration-field-row">
           <label className="found-registration-field"><span>습득 날짜</span><input className={draft.date ? 'has-value' : ''} type="date" name="date" value={draft.date} onInput={updateField} onChange={updateField} onClick={openInputPicker} required /></label>
           <label className="found-registration-field"><span>시간 <em>선택</em></span><input className={draft.time ? 'has-value' : ''} type="time" name="time" value={draft.time} onInput={updateField} onChange={updateField} onClick={openInputPicker} /></label>
