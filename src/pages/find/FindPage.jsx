@@ -14,10 +14,7 @@ import lostBadge from '../../assets/recent-found/lost-badge.svg';
 import privacyBadge from '../../assets/recent-found/privacy-badge.svg';
 import privacyIcon from '../../assets/recent-found/privacy-icon.svg';
 import arrow from '../../assets/dashboard-new/arrow.svg';
-import navSurface from '../../assets/dashboard-new/nav.svg';
-import navHome from '../../assets/home-nav/home-active.svg';
-import navChat from '../../assets/home-nav/chat.svg';
-import navMy from '../../assets/home-nav/my.svg';
+import BottomNavigation from '../../components/navigation/BottomNavigation';
 
 export default function FindPage() {
   const navigate = useNavigate();
@@ -66,7 +63,7 @@ export default function FindPage() {
           ))}
         </div>
       </section>
-      <nav className="recent-found-nav" aria-label="주 메뉴"><img className="recent-found-nav-surface" src={navSurface} alt="" /><a href="/home"><img src={navHome} alt="" /><span>홈</span></a><a href="/chats"><img src={navChat} alt="" /><span>채팅</span></a><a href="/mypage"><img src={navMy} alt="" /><span>마이</span></a></nav>
+      <BottomNavigation />
     </main>
   );
 }

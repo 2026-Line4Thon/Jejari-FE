@@ -1,7 +1,6 @@
-import { Link } from 'react-router-dom';
 import { FoundItemHeader } from '../found-item/FoundItemLayout';
 import { chatAssets, chatSurfaceStyles } from './chatAssets';
-import { chatListPath } from './chatRoutes';
+import BottomNavigation from '../navigation/BottomNavigation';
 import './Chat.css';
 
 export function ChatLayout({ title = '채팅', onBack, onClose, className = '', children }) {
@@ -21,11 +20,7 @@ export function ChatPhoto({ photo, large = false }) {
 }
 
 export function ChatNavigation() {
-  return <nav className="chat-bottom-navigation" aria-label="주 메뉴">
-    <Link to="/home"><span><img src={chatAssets.navHome} alt="" /></span>홈</Link>
-    <Link to={chatListPath} aria-current="page"><span><img src={chatAssets.navChat} alt="" /></span>채팅</Link>
-    <Link to="/mypage"><span><img src={chatAssets.navMy} alt="" /></span>마이</Link>
-  </nav>;
+  return <BottomNavigation />;
 }
 
 export function ChatFeedback({ isLoading, error, children }) {

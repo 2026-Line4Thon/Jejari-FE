@@ -111,25 +111,6 @@
 .dashboard-safety :is(strong, p) { position: relative; inset: auto; margin: 0; line-height: 1.5; }
 .dashboard-safety p { margin-top: 4px; font-size: 12px; }
 
-/* A shared navigation height avoids shrinking touch targets on shorter screens. */
-:is(.new-bottom-navigation, .recent-found-page .recent-found-nav,
-    .lost-method-page .lost-method-navigation, .chat-bottom-navigation) {
-  position: relative; inset: auto; flex: none; min-height: 72px; height: auto;
-  margin-top: auto; padding: 16px 36px max(16px, env(safe-area-inset-bottom, 0px));
-}
-:is(.nav-surface, .recent-found-nav-surface, .lost-method-nav-surface) {
-  left: 0; width: 100%; height: 100%; min-width: 0; pointer-events: none;
-}
-:is(.new-bottom-navigation, .recent-found-nav, .lost-method-navigation, .chat-bottom-navigation) :is(a, button) img {
-  display: block; flex: 0 0 var(--app-nav-icon);
-  width: var(--app-nav-icon); height: var(--app-nav-icon); object-fit: contain;
-}
-.chat-bottom-navigation a > span { width: var(--app-nav-icon); height: var(--app-nav-icon); flex: 0 0 var(--app-nav-icon); }
-.new-bottom-navigation > button[aria-label='채팅'] img,
-.recent-found-nav > a:nth-of-type(2) img,
-.lost-method-navigation > a:nth-of-type(2) img,
-.chat-bottom-navigation > a:nth-of-type(2) img { transform: scale(.9); }
-
 /* Recently registered items: the list grows and remains scrollable. */
 .recent-found-page .recent-found-content { flex: 1; height: auto; overflow: visible; padding: 0 var(--app-gutter) 24px; }
 .recent-found-content .recent-found-intro { left: auto; width: 100%; min-height: 88px; height: auto; padding: 16px; transform: none; }
