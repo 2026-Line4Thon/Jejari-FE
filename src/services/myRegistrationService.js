@@ -15,6 +15,14 @@ async function getJson(path) {
   return data;
 }
 
+function readList(data, key, label) {
+  const items = Array.isArray(data) ? data : data?.[key] ?? data?.results;
+  if (!Array.isArray(items)) throw new Error(`${label} 응답에서 목록을 확인할 수 없어요.`);
+  const total = Array.isArray(data) ? items.length : data.total_count ?? data.count ?? items.length;
+  if (!Number.isSafeInteger(total) || total < items.length) throw new Error(`${label}의 총건수를 확인할 수 없어요.`);
+  return { items, total };
+}
+
 function normalizeStatus(status) {
   const value = String(status || '').toLowerCase();
   if (value.includes('complete')) return 'completed';
@@ -41,12 +49,14 @@ export const myRegistrationService = {
     return getJson(`/users/me/items/${itemId}/status?type=${encodeURIComponent(type)}`);
   },
 
-  async getOngoing() {
-    const [lostItems, foundItems] = await Promise.all([
+  async getOngoing({ includeStats = false } = {}) {
+    const [lostResponse, foundResponse] = await Promise.all([
       getJson('/users/me/items?type=lost'),
       getJson('/users/me/items?type=found'),
     ]);
-    const items = [...(Array.isArray(lostItems) ? lostItems : []), ...(Array.isArray(foundItems) ? foundItems : [])];
+    const lost = readList(lostResponse, 'items', '분실물 등록 내역');
+    const found = readList(foundResponse, 'items', '습득물 등록 내역');
+    const items = [...lost.items, ...found.items];
     const registrations = await Promise.all(items.map(async (item) => {
       try {
         const detail = await this.getStatus(item.id, String(item.item_type || '').toLowerCase());
@@ -55,6 +65,14 @@ export const myRegistrationService = {
         return mapRegistration(item);
       }
     }));
-    return registrations.filter((item) => item.status !== 'completed');
+    const ongoing = registrations.filter((item) => item.status !== 'completed');
+    if (!includeStats) return ongoing;
+    const stats = { lost: lost.total, found: found.total, completed: null };
+    let statsError = '';
+    try {
+      const history = await getJson('/users/me/history');
+      stats.completed = readList(history, 'history', '반환 완료 내역').total;
+    } catch (error) { statsError = error.message || '반환 완료 건수를 불러오지 못했어요.'; }
+    return { items: ongoing, stats, statsError };
   },
 };

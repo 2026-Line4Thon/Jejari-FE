@@ -30,5 +30,5 @@ export function ChatNavigation() {
 
 export function ChatFeedback({ isLoading, error, children }) {
   if (!isLoading && !error) return children;
-  return <div className="chat-feedback" role={error ? 'alert' : 'status'}>{error || '채팅을 불러오고 있어요.'}{error && <Link to={chatListPath}>채팅 목록으로 돌아가기</Link>}</div>;
+  return <div className="chat-feedback" role={error ? 'alert' : 'status'}>{error || '채팅을 불러오고 있어요.'}</div>;
 }

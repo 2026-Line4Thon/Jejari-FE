@@ -1,9 +1,9 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { foundItemService } from '../../services/foundItemService';
 import { FoundItemHeader } from '../../components/found-item/FoundItemLayout';
 import { foundMatchingListPath } from '../../components/found-matching/foundMatchingRoutes';
 import { formatFoundDate } from '../../utils/formatFoundDate';
-import { createMockFoundRegistration } from '../../mocks/foundItems';
 import successGlow from '../../assets/found-complete/success-glow.svg';
 import successCheck from '../../assets/complete/check.svg';
 import editIcon from '../../assets/found-complete/edit.svg';
@@ -19,15 +19,24 @@ export default function FoundRegistrationCompletePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [item] = useState(() => {
-    const mock = createMockFoundRegistration();
     const incoming = location.state?.foundItem;
-    return incoming ? { ...mock, ...incoming, foundDraft: incoming.foundDraft ?? mock.foundDraft } : mock;
+    return incoming || { kind: '', photo: '', foundDraft: {} };
   });
-  const detail = [item.foundDraft.place, formatFoundDate(item.foundDraft.date)].filter(Boolean).join(' · ');
+  const [detail, setDetail] = useState(null);
+  const [error, setError] = useState('');
+  useEffect(() => {
+    const controller = new AbortController();
+    foundItemService.getDetail(item.id, { signal: controller.signal }).then((data) => {
+      if (!controller.signal.aborted) setDetail(data);
+    }).catch((failure) => { if (!controller.signal.aborted) setError(failure.message); });
+    return () => controller.abort();
+  }, [item.id]);
+  const foundAt = detail?.found_at ? new Date(detail.found_at) : null;
+  const dateLabel = foundAt && !Number.isNaN(foundAt.getTime()) ? new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', month: 'long', day: 'numeric' }).format(foundAt) : '';
+  const summaryDetail = detail ? [detail.found_location, dateLabel].filter(Boolean).join(' · ') : [item.foundDraft?.place, formatFoundDate(item.foundDraft?.date)].filter(Boolean).join(' · ');
 
   const editItem = () => {
-    window.scrollTo(0, 0);
-    navigate('/found-analysis', { state: { foundItem: item } });
+    setError('등록 후 수정 API는 아직 제공되지 않았어요. 마이페이지에서 등록 내역을 확인해 주세요.');
   };
   const goHome = () => { window.scrollTo(0, 0); navigate('/home'); };
   const openResults = () => navigate(foundMatchingListPath, { state: { foundItem: item } });
@@ -38,17 +47,17 @@ export default function FoundRegistrationCompletePage() {
       <section className="found-completion-hero" aria-labelledby="found-completion-message">
         <div className="found-completion-mark" aria-hidden="true"><img src={successGlow} alt="" /><img src={successCheck} alt="" /></div>
         <h2 id="found-completion-message">등록이 완료됐어요</h2>
-        <p>주인을 찾을 수 있도록 자동 매칭을 시작했어요.</p>
+        <p role={error ? 'alert' : undefined}>{error || '주인을 찾을 수 있도록 자동 매칭을 시작했어요.'}</p>
       </section>
 
       <article className="found-completion-summary" aria-label="등록한 습득물">
         <div className="found-completion-photo">
-          <div className={'found-completion-photo-crop' + (!item.photoChanged ? ' is-sample' : '')}><img src={item.photo} alt={item.kind + ' 사진'} /></div>
+          <div className="found-completion-photo-crop"><img src={detail?.blurred_image_url || item.photo} alt={(detail?.item_name || item.kind) + ' 사진'} /></div>
         </div>
         <div className="found-completion-item-copy">
           <span className="found-completion-badge"><img src={foundBadge} alt="" /><span>주웠어요</span></span>
-          <h3 title={item.kind}>{item.kind}</h3>
-          <p title={detail}>{detail}</p>
+          <h3 title={detail?.item_name || item.kind}>{detail?.item_name || item.kind}</h3>
+          <p title={summaryDetail}>{summaryDetail}</p>
         </div>
         <button className="found-completion-edit" type="button" aria-label="습득물 정보 수정" onClick={editItem}><img src={editIcon} alt="" /></button>
       </article>

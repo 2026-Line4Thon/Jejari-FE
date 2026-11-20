@@ -10,3 +10,5 @@
 .lost-new-photo-preview img { inset:0 auto 0 10px; width:calc(100% - 130px); height:100%; object-fit:contain; mix-blend-mode:normal; }
 .lost-new-photo-error { position:absolute; top:178px; right:0; left:0; margin:2px 0 0; color:#b42318; font-size:10px; line-height:12px; }
 .lost-new-page button:disabled { cursor:wait; opacity:.65; }
+
+.lost-new-input .place-dropdown-trigger { background:transparent; letter-spacing:-.55px; }

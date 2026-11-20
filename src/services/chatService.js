@@ -1,12 +1,22 @@
-import { createMockChatRooms, createCandidateChat, mockReturnMeeting } from '../mocks/chatRooms';
+import { createCandidateChat, mockReturnMeeting } from '../mocks/chatRooms';
+import { itemApiId, requestItemApi } from './foundItemService';
+import placeholder from '../assets/recent-found/placeholder.svg';
 
-// These are UI models, not assumed server DTOs. Replace this mock adapter with
-// HTTP calls and response mapping when the backend contracts are available.
-const rooms = new Map(createMockChatRooms().map((room) => [room.id, room]));
+const rooms = new Map();
 const listeners = new Set();
 const replyTimers = new Map();
 const clone = (value) => structuredClone(value);
 let messageSequence = 10;
+let sessionToken;
+
+function mapApiRoom(entry) {
+  const id = itemApiId(entry.chat_room_id);
+  const item = entry.item_summary && typeof entry.item_summary === 'object' ? entry.item_summary : {};
+  const date = entry.created_at ? new Date(entry.created_at) : null;
+  const dateLabel = date && !Number.isNaN(date.getTime()) ? new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', month: 'long', day: 'numeric' }).format(date) : '';
+  return { id, candidateId: entry.candidate_id, status: String(entry.status).toUpperCase() === 'COMPLETED' ? 'completed' : 'active', unread: Number(entry.unread_count) > 0, updatedLabel: dateLabel, dateLabel,
+    item: { name: item.item_name || (typeof entry.item_summary === 'string' ? entry.item_summary : '') || '등록 물품', place: item.found_location || item.place_name || '', dateLabel, photo: { source: item.blurred_image_url || item.image_url || placeholder } }, messages: [], meeting: null };
+}
 
 function getRoom(roomId) {
   const room = rooms.get(String(roomId));
@@ -32,13 +42,17 @@ function deliverMockReply(room) {
 }
 
 export const chatService = {
-  // The supplied specification has no chat-list endpoint yet.
-  // Keep list/filter/read state behind this boundary; do not invent requests.
+  // Message queries and mutations remain in the existing ChatRoomPage.
   async getChats({ unreadOnly = false } = {}) {
-    return [...rooms.values()].filter((room) => !unreadOnly || room.unread).map((room) => ({
-      id: room.id, item: clone(room.item), unread: room.unread,
-      status: room.status, updatedLabel: room.updatedLabel,
-    }));
+    const token = localStorage.getItem('access_token');
+    if (sessionToken !== token) { rooms.clear(); sessionToken = token; }
+    const data = await requestItemApi('/chats');
+    if (token !== localStorage.getItem('access_token')) throw new Error('로그인 정보가 변경됐어요. 다시 확인해 주세요.');
+    if (!Array.isArray(data)) throw new Error('채팅 목록 응답을 확인해 주세요.');
+    const entries = data.map(mapApiRoom);
+    rooms.clear();
+    entries.forEach((room) => rooms.set(String(room.id), room));
+    return entries.filter((room) => !unreadOnly || room.unread).map(publicRoom);
   },
 
   // POST /chats: the existing ownership flow validates eligibility first.
@@ -49,10 +63,11 @@ export const chatService = {
     return publicRoom(getRoom(id));
   },
 
-  // GET /chats/:chatId/messages. Room/item metadata is composed into this UI model.
-  // The supplied catalog spells this parameter "char_id"; confirm its DTO later.
+  // Supply room metadata; the teammate's page loads the actual messages.
   async getMessages(roomId) {
-    return publicRoom(getRoom(roomId));
+    const id = itemApiId(roomId);
+    await this.getChats();
+    return publicRoom(getRoom(id));
   },
 
   async markRead(roomId) {

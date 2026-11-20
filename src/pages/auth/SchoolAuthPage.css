@@ -18,22 +18,24 @@
 .login-description { top: 34.53%; color: #64788a; font-size: 15px; font-weight: 500; line-height: 1.4; letter-spacing: -0.55px; }
 .login-label { color: #10283b; font-size: 14px; font-weight: 700; line-height: 1.2; letter-spacing: -0.5px; }
 .login-label:not(.code-label) { top: 41.82%; }
-.code-label { top: 60.78%; }
+.verification-fields { position: absolute; top: 52.37%; left: 5.13%; width: 351px; max-width: calc(100% - 10.26%); }
+.verification-fields .code-label { position: static; display: block; margin-top: 16px; }
 
 .surface-field, .request-code-button { position: absolute; left: 5.13%; width: 351px; max-width: calc(100% - 10.26%); }
 .surface-field { height: 52px; }
 .email-field { top: 44.79%; }
-.code-field { top: 63.74%; height: 51px; }
+.verification-fields .code-field { position: relative; left: auto; width: 100%; max-width: none; height: 51px; margin-top: 8px; }
 .surface-field > img, .request-code-button > img { position: absolute; top: 0; left: 0; display: block; pointer-events: none; }
 .surface-field > img { width: 351px; }
 .surface-field input { position: relative; z-index: 1; width: 100%; height: 100%; padding: 0 13px; border: 0; outline: 0; background: transparent; color: #10283b; font-family: inherit; font-size: 15px; line-height: 1; }
 .surface-field input::placeholder { color: #64788a; opacity: 1; }
 
-.request-code-button { top: 52.37%; height: 55px; padding: 0; border: 0; background: transparent; color: #10283b; cursor: pointer; }
+.verification-fields .request-code-button { position: relative; left: auto; display: block; width: 100%; max-width: none; height: 55px; padding: 0; border: 0; background: transparent; color: #10283b; cursor: pointer; }
 .request-code-button > img { width: 351px; height: 55px; }
 .request-code-button span { position: relative; z-index: 1; display: grid; width: 100%; height: 100%; place-items: center; font-size: 16px; font-weight: 700; letter-spacing: -0.65px; }
+.login-request-message { margin: 6px 0 0; color: #64788a; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
 
-.login-security-note { top: 71.45%; display: flex; align-items: center; gap: 8px; color: #64788a; font-size: 13px; font-weight: 500; line-height: 1.2; letter-spacing: -0.45px; }
+.verification-fields .login-security-note { position: static; display: flex; align-items: center; gap: 8px; margin-top: 14px; color: #64788a; font-size: 13px; font-weight: 500; line-height: 1.2; letter-spacing: -0.45px; }
 .login-security-note img { width: 16px; height: 16px; }
 
 .school-auth-footer { position: absolute; z-index: 1; right: 0; bottom: 3.44%; left: 0; height: 54px; }

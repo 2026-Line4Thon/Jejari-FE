@@ -13,6 +13,7 @@
 .found-registration-field { display: block; min-width: 0; }
 .found-registration-field em { margin-left: 4px; color: #91a3b2; font-size: 12px; font-style: normal; font-weight: 400; }
 .found-registration-field input { display: block; width: 100%; min-width: 0; height: 46px; margin-top: 9px; padding: 0 13px; border: 0; border-radius: 13px; background: url('../../assets/found-analysis/input.svg') center / 100% 46px no-repeat; color: #10283b; font-size: 15px; line-height: 20px; }
+.found-registration-field .place-dropdown { margin-top:9px; }
 .found-registration-field-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 22px; }
 .found-registration-field-row input { background-image: url('../../assets/found-analysis/short-input.svg'); }
 .found-registration-field-row input::-webkit-calendar-picker-indicator { cursor:pointer; opacity:1; }

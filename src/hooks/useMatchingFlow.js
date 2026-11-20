@@ -21,12 +21,15 @@ function useMatchingAction() {
   useEffect(() => { active.current = true; return () => { active.current = false; }; }, []);
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState('');
+  const busy = useRef(false);
   const run = async (operation) => {
+    if (busy.current) return null;
+    busy.current = true;
     setIsPending(true);
     setError('');
     try { const value = await operation(); return active.current ? value : null; }
     catch (actionError) { if (active.current) setError(actionError.message || '요청을 처리하지 못했어요.'); return null; }
-    finally { if (active.current) setIsPending(false); }
+    finally { busy.current = false; if (active.current) setIsPending(false); }
   };
   return { run, isPending, error };
 }
@@ -48,12 +51,20 @@ export function useOwnershipCheck(candidateId) {
   const resource = useMatchingResource(load);
   const action = useMatchingAction();
   const [draft, setDraft] = useState({ candidateId, value: '' });
+  const [updated, setUpdated] = useState(null);
+  const data = String(updated?.candidateId) === String(candidateId) ? updated : resource.data;
   const answer = draft.candidateId === candidateId ? draft.value : '';
+  const sendAnswer = (skip = false) => action.run(async () => {
+    const result = skip ? await matchingService.skipOwnershipAnswer(data.id) : await matchingService.submitOwnershipAnswer(data.id, answer);
+    setUpdated(result);
+    setDraft({ candidateId, value: '' });
+    return result;
+  });
   return {
-    ...resource, answer, setAnswer: (value) => setDraft({ candidateId, value }),
-    isPending: action.isPending, actionError: action.error,
-    submit: () => action.run(() => matchingService.submitOwnershipAnswer(resource.data.id, answer)),
-    skip: () => action.run(() => matchingService.skipOwnershipAnswer(resource.data.id)),
+    ...resource, data, answer, setAnswer: (value) => setDraft({ candidateId, value }),
+    isPending: action.isPending, actionError: action.error || (['unverified', 'locked'].includes(data?.status) ? data.message || '답변이 일치하지 않아요.' : ''),
+    submit: () => sendAnswer(),
+    skip: () => sendAnswer(true),
   };
 }
 
