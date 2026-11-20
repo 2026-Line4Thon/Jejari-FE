@@ -68,8 +68,10 @@ export function useOwnershipCheck(candidateId) {
   };
 }
 
-export function useReturnConnection(candidateId, checkId) {
-  const load = useCallback(() => matchingService.getReturnConnection(candidateId, checkId), [candidateId, checkId]);
+export function useReturnConnection(candidateId, checkId, { ownershipSkipped = false } = {}) {
+  const load = useCallback(() => ownershipSkipped
+    ? { verification: { status: 'unverified' } }
+    : matchingService.getReturnConnection(candidateId, checkId), [candidateId, checkId, ownershipSkipped]);
   const resource = useMatchingResource(load);
   const action = useMatchingAction();
   return {

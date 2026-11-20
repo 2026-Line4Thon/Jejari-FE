@@ -31,7 +31,7 @@
 .recent-heading h2 { position:static; margin:0; font-size:18px; font-weight:600; letter-spacing:-.7px; }
 .recent-heading button { padding:0; border:0; background:transparent; color:#64788a; font-family:inherit; font-size:13px; cursor:pointer; }
 .item-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:1.9dvh; }
-.recent-item { position:relative; min-width:0; }
+.recent-item { position:relative; min-width:0; color:inherit; text-decoration:none; }
 .recent-photo { position:relative; width:100%; height:9.48dvh; overflow:hidden; border-radius:7px; }
 .placeholder { position:absolute; inset:0; width:110px; height:9.48dvh; min-width:100%; }
 .item-photo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }

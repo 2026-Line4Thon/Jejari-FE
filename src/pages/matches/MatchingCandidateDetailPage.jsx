@@ -4,7 +4,7 @@ import { matchingService } from '../../services/matchingService';
 import placeholder from '../../assets/recent-found/placeholder.svg';
 import { MatchingLayout, MatchingLoadState, CandidatePhoto, SimilarityBadge, MatchingReasons } from '../../components/matching-flow/MatchingLayout';
 import { matchingAssets } from '../../components/matching-flow/matchingAssets';
-import { matchingListPath, ownershipPath } from '../../components/matching-flow/matchingRoutes';
+import { matchingListPath, ownershipPath, candidateBackPath } from '../../components/matching-flow/matchingRoutes';
 
 export function MatchingCandidateDetailView({ candidate, onBack, onReject, isPending = false, error = '', navigationState }) {
   return <MatchingLayout title="매칭 후보 상세" titleId="matching-detail-title" onBack={onBack} className="matching-detail-page">
@@ -78,7 +78,7 @@ export default function MatchingCandidateDetailPage() {
   }, [candidateId]);
 
   const listPath = matchingListPath + (location.state?.lostItemId ? '?itemId=' + location.state.lostItemId : '');
-  const onBack = () => navigate(-1);
+  const onBack = () => navigate(candidateBackPath(location.state), { replace: true });
   const onReject = async () => {
     if (busy.current) return;
     busy.current = true; setIsPending(true); setActionError('');

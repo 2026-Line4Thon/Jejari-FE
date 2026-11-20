@@ -44,8 +44,8 @@ export default function MyPage() {
     loadProfile();
     return () => { active = false; };
   }, []);
-  const openRegistration = async (itemId) => {
-    const destination = await registrations.open(itemId);
+  const openRegistration = async (itemId, itemType) => {
+    const destination = await registrations.open(itemId, itemType);
     if (destination) navigate(destination.to, { state: destination.state });
   };
   const logout = async () => {
@@ -103,7 +103,8 @@ export default function MyPage() {
       {!registrations.isLoading && !registrations.error && !registrations.items.length && <p className="my-registration-feedback">진행 중인 등록이 없어요.</p>}
       {registrations.items.map((item) => {
         const badge = getRegistrationBadge(item);
-        return <button type="button" className="my-item" key={item.id} onClick={() => openRegistration(item.id)} disabled={registrations.pendingId !== null} aria-busy={registrations.pendingId === item.id}>
+        const key = item.type + ':' + item.id;
+        return <button type="button" className="my-item" key={key} onClick={() => openRegistration(item.id, item.type)} disabled={registrations.pendingKey !== null} aria-busy={registrations.pendingKey === key}>
           <span className={'my-item-photo is-' + item.photo.variant}><img src={item.photo.source} alt="" /></span>
           <div><em className={badge.className}>{badge.label}</em><strong>{item.name}</strong><small>{item.type === 'lost' ? '분실' : '습득'} · {item.place}</small></div>
           <b aria-hidden="true">›</b>
