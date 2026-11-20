@@ -1,0 +1,306 @@
+/* Shared dimensions; viewport height never sets the distance between text fields. */
+:root {
+  --app-width: 430px;
+  --app-gutter: 20px;
+  --app-nav-icon: 21px;
+  --app-top: max(16px, env(safe-area-inset-top, 0px));
+  --app-bottom: max(24px, env(safe-area-inset-bottom, 0px));
+}
+
+#root { width: 100%; max-width: var(--app-width); min-width: 0; }
+
+:is(.school-auth-page, .new-dashboard-page, .recent-found-page, .my-page,
+    .lost-method-page, .lost-new-page, .registered-page, .notify-page,
+    .notification-settings-page, .privacy-page, .return-history-page) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  height: auto;
+  overflow: clip;
+}
+
+:is(.school-auth-page, .new-dashboard-page, .recent-found-page, .my-page,
+    .lost-method-page, .lost-new-page, .registered-page, .notify-page,
+    .notification-settings-page, .privacy-page, .return-history-page) > img:first-child,
+.login-background, .dashboard-background, .recent-found-background {
+  width: 100%; height: 100%; min-width: 0; min-height: 0; pointer-events: none; object-fit: fill;
+}
+
+:is(.found-item-page, .login-page) { min-height: 100dvh; overflow-wrap: anywhere; }
+.found-item-page { padding-top: var(--app-top); padding-bottom: var(--app-bottom); }
+.found-item-page:not(.chat-page) { padding-inline: var(--app-gutter); }
+.found-item-page :is(input, textarea) { min-width: 0; font-size: 16px; }
+.found-item-page :is(h1, h2, h3, p) { overflow-wrap: anywhere; }
+
+/* Login: logo, introduction and form follow document flow, including server notices. */
+.school-auth-page { padding: 0 var(--app-gutter) var(--app-bottom); }
+.school-auth-page .school-auth-content {
+  flex: 1; height: auto; padding-top: clamp(24px, 6svh, 52px);
+}
+.school-auth-page :is(.login-logo, .login-eyebrow, h1, .login-description,
+    .login-label, .email-field, .verification-fields, .login-security-note) {
+  position: relative; inset: auto; transform: none;
+}
+.school-auth-page .login-logo { display: block; width: 38px; height: 38px; margin-bottom: 24px; }
+.school-auth-page .login-eyebrow { margin: 0 0 8px; font-size: 13px; line-height: 1.5; }
+.school-auth-page h1 { margin: 0; font-size: clamp(24px, 6.9vw, 28px); line-height: 1.35; word-break: keep-all; }
+.school-auth-page .login-description { margin: 12px 0 28px; font-size: 14px; line-height: 1.6; word-break: keep-all; }
+.school-auth-page .login-label { display: block; margin: 0; line-height: 1.5; }
+.school-auth-page .surface-field { width: 100%; max-width: none; min-width: 0; height: 52px; margin-top: 8px; }
+.school-auth-page .surface-field > img { width: 100%; height: 100%; }
+.school-auth-page .surface-field input { min-width: 0; border-radius: 13px; font-size: 16px; }
+.school-auth-page .verification-fields { width: 100%; max-width: none; margin-top: 12px; }
+.school-auth-page .request-code-button { width: 100%; max-width: none; height: 55px; }
+.school-auth-page .request-code-button > img { width: 100%; height: 100%; }
+.school-auth-page .code-label { margin-top: 18px; }
+.school-auth-page .login-request-message { margin: 8px 0 0; line-height: 1.5; overflow-wrap: anywhere; }
+.school-auth-page .login-security-note { align-items: flex-start; margin-top: 14px; font-size: 12px; line-height: 1.5; }
+.school-auth-page .login-security-note img { flex: 0 0 16px; margin-top: 1px; }
+.school-auth-page .school-auth-footer { position: relative; inset: auto; flex: none; height: auto; margin-top: 32px; }
+.school-auth-page .school-auth-footer button { width: 100%; max-width: none; min-height: 54px; }
+.school-auth-page .school-auth-footer button img { width: 100%; height: 100%; }
+.login-page .login-description { position: static; margin: 0; line-height: 1.5; }
+.login-page .login-content { padding-block: 32px; }
+.login-page .login-button { min-height: 54px; height: auto; padding: 12px; }
+
+/* Headers take up space instead of overlapping the page below them. */
+:is(.lost-method-header, .lost-new-header, .registered-page > header,
+    .my-page > header, .notify-page > header, .notification-settings-header,
+    .privacy-header, .return-history-header, .recent-found-header) {
+  position: relative; inset: auto; display: flex; flex: none; align-items: center;
+  justify-content: center; height: 44px; margin: var(--app-top) var(--app-gutter) 24px;
+}
+.recent-found-page .recent-found-header button { top: auto; left: 0; }
+.recent-found-page .recent-found-header h1 { position: static; margin: 0 44px; line-height: 1.4; }
+
+/* Home */
+.new-dashboard-page .new-dashboard-header {
+  position: relative; display: flex; flex: none; align-items: center;
+  justify-content: space-between; height: 76px; padding: var(--app-top) var(--app-gutter) 12px;
+}
+.new-dashboard-header .header-surface { inset: 0; width: 100%; height: 100%; min-width: 0; pointer-events: none; }
+.new-dashboard-header .dashboard-logo, .new-dashboard-header button { position: relative; inset: auto; flex: none; }
+.new-dashboard-header .dashboard-logo { width: 44px; height: 44px; }
+.new-dashboard-page .dashboard-main-content {
+  display: flex; flex: 1; flex-direction: column; gap: 0;
+  height: auto; padding: 8px var(--app-gutter) 24px;
+}
+.dashboard-main-content > :is(.dashboard-greeting, h1, .quick-actions, .matching-status, .recent-items, .dashboard-safety) {
+  position: relative; inset: auto; width: 100%; margin: 0;
+}
+.new-dashboard-page .dashboard-main-content > * + * { margin-top: 16px; }
+.new-dashboard-page .dashboard-main-content > h1 { margin-top: 6px; font-size: clamp(23px, 6.7vw, 26px); line-height: 1.35; }
+.dashboard-main-content .quick-actions { gap: 10px; }
+.quick-actions .quick-action { flex: 1; min-width: 0; width: auto; height: 180px; }
+.quick-action .action-card-surface { width: 100%; height: 100%; }
+.quick-actions .quick-action strong { right: 12px; font-size: clamp(17px, 4.9vw, 19px); line-height: 1.3; }
+.quick-actions .quick-action small { bottom: 14px; white-space: normal; line-height: 1.5; }
+.dashboard-main-content .matching-status { min-height: 86px; height: auto; }
+.matching-status .status-surface { width: 100%; height: 100%; }
+.matching-status .status-copy { right: 86px; left: 16px; }
+.matching-status .status-copy p { padding-left: 17px; font-size: 12px; line-height: 1.5; }
+.matching-status :is(.match-count, b) { top: 50%; transform: translateY(-50%); }
+.recent-items .item-grid { margin-top: 16px; }
+.recent-item .recent-photo { height: auto; aspect-ratio: 1.25; }
+.recent-photo .placeholder { width: 100%; height: 100%; min-width: 0; }
+.recent-item > strong { margin-top: 8px; }
+.recent-item > small { margin-top: 5px; white-space: normal; overflow-wrap: anywhere; line-height: 1.4; }
+.recent-photo .privacy-badge { max-width: calc(100% - 4px); overflow: hidden; }
+.dashboard-main-content .dashboard-safety { min-height: 70px; height: auto; padding: 14px 14px 14px 42px; }
+.dashboard-safety .safety-surface { width: 100%; height: 100%; }
+.dashboard-safety :is(strong, p) { position: relative; inset: auto; margin: 0; line-height: 1.5; }
+.dashboard-safety p { margin-top: 4px; font-size: 12px; }
+
+/* A shared navigation height avoids shrinking touch targets on shorter screens. */
+:is(.new-bottom-navigation, .recent-found-page .recent-found-nav,
+    .lost-method-page .lost-method-navigation, .chat-bottom-navigation) {
+  position: relative; inset: auto; flex: none; min-height: 72px; height: auto;
+  margin-top: auto; padding: 16px 36px max(16px, env(safe-area-inset-bottom, 0px));
+}
+:is(.nav-surface, .recent-found-nav-surface, .lost-method-nav-surface) {
+  left: 0; width: 100%; height: 100%; min-width: 0; pointer-events: none;
+}
+:is(.new-bottom-navigation, .recent-found-nav, .lost-method-navigation, .chat-bottom-navigation) :is(a, button) img {
+  display: block; flex: 0 0 var(--app-nav-icon);
+  width: var(--app-nav-icon); height: var(--app-nav-icon); object-fit: contain;
+}
+.chat-bottom-navigation a > span { width: var(--app-nav-icon); height: var(--app-nav-icon); flex: 0 0 var(--app-nav-icon); }
+.new-bottom-navigation > button[aria-label='채팅'] img,
+.recent-found-nav > a:nth-of-type(2) img,
+.lost-method-navigation > a:nth-of-type(2) img,
+.chat-bottom-navigation > a:nth-of-type(2) img { transform: scale(.9); }
+
+/* Recently registered items: the list grows and remains scrollable. */
+.recent-found-page .recent-found-content { flex: 1; height: auto; overflow: visible; padding: 0 var(--app-gutter) 24px; }
+.recent-found-content .recent-found-intro { left: auto; width: 100%; min-height: 88px; height: auto; padding: 16px; transform: none; }
+.recent-found-intro > img { width: 100%; height: 100%; }
+.recent-found-intro .recent-found-intro-copy { position: relative; inset: auto; gap: 8px; }
+.recent-found-intro-copy :is(strong, p) { line-height: 1.5; overflow-wrap: anywhere; }
+.recent-found-content .found-list { width: 100%; gap: 12px; margin: 18px 0 0; }
+.found-list .found-item-card {
+  display: grid; grid-template-columns: 80px minmax(0, 1fr) 16px;
+  align-items: center; gap: 12px; min-height: 120px; height: auto; padding: 14px 12px;
+}
+.found-item-card .found-card-surface { width: 100%; height: 100%; }
+.found-item-card .found-photo { position: relative; inset: auto; width: 80px; height: 88px; min-height: 0; }
+.found-photo > img:first-child { width: 100%; height: 100%; }
+.found-item-card .found-item-copy { position: relative; inset: auto; min-width: 0; }
+.found-item-copy > strong, .found-item-copy > span:not(.found-badge) { line-height: 1.5; overflow-wrap: anywhere; }
+.found-item-copy > span:not(.found-badge) img { flex: none; }
+.found-item-card .found-arrow { position: relative; inset: auto; transform: none; }
+
+/* Registration method and lost-item form. */
+.lost-method-page .lost-method-content { position: relative; inset: auto; flex: 1; margin: 0 var(--app-gutter); padding-bottom: 32px; }
+.lost-method-content .lost-method-card { position: relative; inset: auto; display: block; min-height: 108px; height: auto; margin-top: 24px; }
+.lost-method-card .lost-method-card-surface { height: 100%; }
+.lost-method-card .lost-method-copy { right: 32px; top: 28px; }
+.lost-method-copy :is(strong, small) { white-space: normal; line-height: 1.5; }
+.lost-method-card .lost-method-chevron { right: 12px; top: 46px; }
+.lost-new-page .lost-new-content {
+  position: relative; inset: auto; display: grid; flex: 1;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; gap: 22px 10px;
+  margin: 0 var(--app-gutter) var(--app-bottom); overflow: visible;
+}
+.lost-new-page .lost-new-content::after { display: none; }
+.lost-new-content > :is(.lost-new-step, .lost-new-progress, .photo-label,
+    .lost-new-upload, .lost-new-photo-error, .lost-new-footer),
+.lost-new-content > .lost-new-field:not(.kind):not(.color):not(.date):not(.time) { grid-column: 1 / -1; }
+.lost-new-content > .lost-new-progress { margin-top: -10px; }
+.lost-new-page .lost-new-content .lost-new-field { position: static; width: 100%; min-width: 0; }
+.lost-new-page .lost-new-content :is(.photo-label, .lost-new-upload, .lost-new-photo-error, .lost-new-footer) { position: relative; inset: auto; }
+.lost-new-page .lost-new-upload { width: 100%; height: 101px; margin-top: -10px; }
+.lost-new-upload .lost-new-upload-box { width: 100%; height: 100%; }
+.lost-new-page .lost-new-content .lost-new-photo-error { margin: -14px 0 0; font-size: 12px; line-height: 1.5; }
+.lost-new-page .lost-new-field > strong { line-height: 1.5; }
+.lost-new-page .lost-new-content .lost-new-input { margin-top: 8px; }
+.lost-new-page .lost-new-content :is(.lost-new-input input, .lost-new-textarea input) { min-width: 0; font-size: 16px; }
+.lost-new-page .lost-new-content .lost-new-textarea,
+.lost-new-page .lost-new-content .lost-new-textarea > img { height: 104px; }
+.lost-new-page .lost-new-content .lost-new-textarea input { inset: 0; height: 100%; padding: 0 13px; transform: none; }
+.lost-new-page .lost-new-content .lost-new-footer { position: static; width: 100%; height: auto; margin-top: 2px; }
+.lost-new-footer button { min-height: 54px; }
+.lost-new-footer button img { width: 100%; height: 100%; }
+.found-registration-thumbnails { flex-wrap: wrap; }
+.found-analysis-private-field .found-analysis-private-card { min-height: 69px; height: auto; padding: 12px 14px; }
+.found-analysis-private-card p { position: relative; inset: auto; padding-right: 22px; white-space: normal; }
+.found-analysis-private-card input { position: relative; inset: auto; width: 100%; margin-top: 8px; }
+
+/* Photo sheets fit the viewport independently of the length of their form. */
+.lost-new-page .photo-picker { position: fixed; inset: 0; z-index: 20; }
+.photo-picker .photo-picker-sheet {
+  bottom: 0; width: min(100%, var(--app-width)); height: auto; min-height: 0;
+  max-height: calc(100dvh - 24px); margin: 0 auto;
+  padding: 20px var(--app-gutter) var(--app-bottom); overflow-y: auto;
+}
+.photo-picker-sheet :is(h2, p, .photo-picker-action) { position: relative; inset: auto; width: 100%; }
+.photo-picker-sheet h2 { width: calc(100% - 48px); margin: 0; line-height: 1.4; }
+.photo-picker-sheet p { margin: 8px 0 18px; line-height: 1.5; }
+.photo-picker-sheet .photo-picker-action { display: block; margin-top: 12px; }
+.found-photo-picker { width: min(var(--app-width), 100vw); }
+
+/* Analysis and registration completion. */
+.found-analyzing-page { min-height: 100dvh; }
+.found-analyzing-page .found-analyzing-art { height: clamp(220px, 35svh, 300px); margin-top: 16px; }
+.found-analyzing-page .found-analyzing-copy { margin-top: 18px; }
+.found-completion-page :is(.found-completion-mark, .found-completion-hero h2, .found-completion-hero > p) { transform: none; }
+.found-completion-page .found-completion-matching { display: flex; align-items: center; gap: 14px; min-height: 86px; height: auto; padding: 16px 14px; }
+.found-completion-matching .found-completion-radar { position: relative; inset: auto; flex: 0 0 53px; }
+.found-completion-matching > div:last-child { position: relative; inset: auto; min-width: 0; }
+.registered-page > section { position: relative; inset: auto; flex: 1; margin: 0 var(--app-gutter); }
+.registered-page :is(.registered-item, .registered-matching, .registered-info) { position: relative; inset: auto; min-height: 86px; height: auto; margin-top: 16px; padding: 16px; }
+.registered-page h2 { margin-top: 28px; line-height: 1.3; }
+.registered-page .registered-notice { margin-bottom: 28px; line-height: 1.5; }
+.registered-page .registered-item > div { min-width: 0; overflow-wrap: anywhere; }
+.registered-item :is(.registered-item-photo, .registered-edit), .registered-matching i { flex-shrink: 0; }
+.registered-page > footer { position: relative; inset: auto; margin: auto var(--app-gutter) 0; padding-block: 28px var(--app-bottom); }
+
+/* My page, notifications and settings grow with the returned content. */
+.my-page > section { position: relative; inset: auto; flex: 1; margin: 0 var(--app-gutter); padding-bottom: var(--app-bottom); }
+.my-page .my-profile { min-height: 102px; height: auto; padding-block: 16px; }
+.my-profile > i { flex: 0 0 48px; }
+.my-profile > div, .my-item > div { min-width: 0; overflow-wrap: anywhere; }
+.my-profile span { line-height: 1.5; }
+.my-page .my-item { min-height: 88px; height: auto; padding-block: 12px; }
+.my-item :is(strong, small) { line-height: 1.5; }
+.my-page .my-menu { margin-top: 32px; }
+.my-menu button { min-height: 44px; height: auto; }
+.notify-page > section { position: relative; inset: auto; flex: 1; padding-bottom: var(--app-bottom); }
+.notify-page .notification-toolbar { padding-inline: var(--app-gutter); }
+.notify-page .notification-toolbar nav { flex-wrap: wrap; padding-inline: 0; }
+.notify-page .notification-feedback { margin: 20px 0; color: #64788a; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+.notify-page article { align-items: flex-start; gap: 10px; }
+.notify-page .notify-icon { flex: 0 0 38px; margin-right: 0; }
+.notify-page article > div { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.notify-page article :is(strong, p, b) { line-height: 1.5; }
+.notify-page article time { position: relative; inset: auto; flex: 0 0 auto; margin-left: auto; line-height: 1.5; }
+:is(.notification-settings-content, .privacy-content, .return-history-content) {
+  position: relative; inset: auto; flex: 1; margin: 0 var(--app-gutter); overflow: visible;
+}
+:is(.notification-home-button, .privacy-home, .return-home-button) {
+  position: relative; inset: auto; flex: none; min-height: 54px;
+  margin: 24px var(--app-gutter) var(--app-bottom);
+}
+.notification-settings-content .notification-intro, .privacy-content .privacy-info { min-height: 68px; height: auto; }
+:is(.notification-row, .notification-group.optional .notification-row, .privacy-toggle-row) { gap: 12px; min-height: 71px; height: auto; padding-block: 16px; }
+:is(.notification-row, .privacy-toggle-row) > div { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.privacy-toggle-row > button { flex: 0 0 46px; }
+.privacy-content .account-card { grid-template-columns: minmax(72px, .8fr) minmax(0, 1.5fr); grid-template-rows: repeat(3, auto); gap: 12px 8px; height: auto; padding-block: 16px; }
+.account-card strong { min-width: 0; overflow-wrap: anywhere; }
+.return-history-content .return-summary { display: grid; grid-template-columns: 100px minmax(0, 1fr); align-items: center; gap: 4px 12px; height: auto; min-height: 80px; padding: 14px 16px; }
+.return-summary :is(span, strong, p) { position: static; margin: 0; line-height: 1.5; }
+.return-summary > span { grid-column: 1 / -1; }
+.return-history-content .return-card { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; min-height: 122px; height: auto; padding: 12px; }
+.return-card :is(.return-photo, .return-card-main, .return-card-bottom) { position: relative; inset: auto; min-width: 0; }
+.return-card-main { overflow-wrap: anywhere; }
+.return-card .return-card-bottom { grid-column: 1 / -1; flex-wrap: wrap; gap: 8px; min-height: 35px; height: auto; padding-top: 10px; }
+
+/* Conversation screens keep their own scrolling area and a separate composer. */
+.ai-chat-page .ai-chat-header { margin: var(--app-top) var(--app-gutter) 0; }
+.ai-chat-page .ai-chat-content { padding-inline: var(--app-gutter); }
+.ai-chat-page .ai-chat-footer input { font-size: 16px; }
+.chat-page { padding-top: var(--app-top); padding-bottom: 0; }
+.chat-page .chat-heading { margin-inline: var(--app-gutter); }
+.chat-page.private-chat-page { height: 100dvh; min-height: 0; }
+.private-chat-page .chat-item-summary > span:nth-child(2) { min-width: 0; overflow-wrap: anywhere; }
+.chat-page .chat-room-summary { flex: 1; }
+.chat-room-summary :is(strong, small), .chat-item-summary :is(strong, small) { line-height: 1.5; overflow-wrap: anywhere; }
+.chat-room-list li { background-size: 100% 100%; }
+.chat-page .chat-composer input { font-size: 16px; }
+.chat-composer button { flex: 0 0 44px; }
+.chat-page.chat-return-complete-page { padding-inline: var(--app-gutter); }
+.chat-return-complete-page .chat-heading { margin-inline: 0; }
+.chat-return-complete-page :is(.chat-success-mark, h2) { transform: none; }
+.chat-return-complete-page .chat-success-mark { margin-top: clamp(24px, 6svh, 56px); }
+.chat-return-complete-page .chat-success-summary { margin-top: 32px; }
+.chat-return-complete-page .chat-home-button { margin-top: 32px; margin-bottom: var(--app-bottom); }
+
+/* Existing flow-based matching screens only need wrapping and flexible button heights. */
+.matching-flow-page :is(.matching-primary-button, .matching-yes-button,
+    .matching-secondary-button, .matching-muted-button) { min-height: 54px; height: auto; padding-block: 14px; overflow-wrap: anywhere; }
+.matching-flow-page :is(.matching-reasons li, .return-steps li) > div { min-width: 0; }
+.matching-detail-privacy > img, .ownership-helper > img { flex-shrink: 0; }
+.matching-flow-page :is(.ownership-intro h2, .return-intro h2) { line-height: 1.35; }
+.matching-flow-page .ownership-question textarea { font-size: 16px; line-height: 1.5; }
+.matching-flow-page .return-verified { margin-top: 32px; }
+.matching-flow-page .return-steps-title { margin-top: 32px; }
+
+.splash-page { display: grid; min-height: 360px; place-items: center; }
+.splash-page .splash-content { position: relative; inset: auto; padding: 48px var(--app-gutter); transform: none; }
+.splash-page .splash-loader { bottom: var(--app-bottom); }
+
+@media (max-width: 350px) {
+  :root { --app-gutter: 16px; }
+  .school-auth-page .login-logo { margin-bottom: 18px; }
+  .school-auth-page .login-description { margin-bottom: 22px; }
+  .matching-flow-page .matching-detail-hero { margin-inline: -16px; }
+  .found-analyzing-page .found-analyzing-art { margin-inline: -16px; }
+  .notify-page article { padding-inline: 16px; }
+  .notify-page article time { flex-basis: 42px; text-align: right; }
+  .privacy-content .account-card { padding-inline: 12px; }
+}
+
+@media (max-height: 700px) {
+  .school-auth-page .school-auth-content { padding-top: 24px; }
+  .school-auth-page .login-logo { margin-bottom: 16px; }
+  .school-auth-page .login-description { margin-bottom: 20px; }
+}

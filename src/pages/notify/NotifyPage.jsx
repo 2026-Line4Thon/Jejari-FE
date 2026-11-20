@@ -52,8 +52,8 @@ export default function NotifyPage() {
     setIsReadingAll(false);
   };
   const visibleAlerts = alerts.filter((item) => filter === '전체' || (filter === '반환' ? ['CHAT_STARTED', 'RETURN_COMPLETED'].includes(item.type) : !['CHAT_STARTED', 'RETURN_COMPLETED'].includes(item.type)));
-  return <main className="notify-page"><img src={pageBackground} alt=""/><header><button onClick={()=>navigate(-1)}><img src={backSurface} alt=""/><img src={backArrow} alt=""/></button><h1>알림</h1></header><section><nav><button type="button" onClick={markAllAsRead} disabled={isLoading || isReadingAll}>모두 읽음</button>{['전체','매칭','반환'].map(item=><button type="button" className={filter===item?'active':''} onClick={()=>setFilter(item)} key={item}>{item}</button>)}</nav>
-    {(error || isLoading || !visibleAlerts.length) && <p role={error ? 'alert' : 'status'}>{error || (isLoading ? '알림을 불러오고 있어요.' : '알림이 없어요.')}</p>}
+  return <main className="notify-page"><img src={pageBackground} alt=""/><header><button onClick={()=>navigate(-1)}><img src={backSurface} alt=""/><img src={backArrow} alt=""/></button><h1>알림</h1></header><section><div className="notification-toolbar"><nav><button type="button" className={filter==='전체'?'active':''} onClick={()=>setFilter('전체')}>전체</button><button type="button" onClick={markAllAsRead} disabled={isLoading || isReadingAll}>모두 읽음</button>{['매칭','반환'].map(item=><button type="button" className={filter===item?'active':''} onClick={()=>setFilter(item)} key={item}>{item}</button>)}</nav>
+    {(error || isLoading || !visibleAlerts.length) && <p className="notification-feedback" role={error ? 'alert' : 'status'}>{error || (isLoading ? '알림을 불러오고 있어요.' : '알림이 없어요.')}</p>}</div>
     {visibleAlerts.map((alert) => {
       const i = alert.type === 'MATCH_CANDIDATE' ? 0 : ['CHAT_STARTED', 'RETURN_COMPLETED'].includes(alert.type) ? 1 : 2;
       const date = new Date(alert.created_at);
