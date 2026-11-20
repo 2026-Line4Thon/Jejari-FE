@@ -9,8 +9,20 @@ const clone = (value) => structuredClone(value);
 let messageSequence = 10;
 let sessionToken;
 
+function readChatList(data) {
+  if (Array.isArray(data)) return data;
+  // Accept paginated and wrapped lists as well as the documented array.
+  for (const container of [data, data?.data]) {
+    if (Array.isArray(container)) return container;
+    for (const key of ['results', 'chat_rooms', 'chats', 'items']) {
+      if (Array.isArray(container?.[key])) return container[key];
+    }
+  }
+  throw new Error('채팅 목록 응답을 확인해 주세요.');
+}
+
 function mapApiRoom(entry) {
-  const id = itemApiId(entry.chat_room_id);
+  const id = itemApiId(entry.chat_room_id ?? entry.id);
   const item = entry.item_summary && typeof entry.item_summary === 'object' ? entry.item_summary : {};
   const date = entry.created_at ? new Date(entry.created_at) : null;
   const dateLabel = date && !Number.isNaN(date.getTime()) ? new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', month: 'long', day: 'numeric' }).format(date) : '';
@@ -48,8 +60,7 @@ export const chatService = {
     if (sessionToken !== token) { rooms.clear(); sessionToken = token; }
     const data = await requestItemApi('/chats');
     if (token !== localStorage.getItem('access_token')) throw new Error('로그인 정보가 변경됐어요. 다시 확인해 주세요.');
-    if (!Array.isArray(data)) throw new Error('채팅 목록 응답을 확인해 주세요.');
-    const entries = data.map(mapApiRoom);
+    const entries = readChatList(data).map(mapApiRoom);
     rooms.clear();
     entries.forEach((room) => rooms.set(String(room.id), room));
     return entries.filter((room) => !unreadOnly || room.unread).map(publicRoom);
