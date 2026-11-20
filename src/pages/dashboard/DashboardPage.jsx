@@ -20,6 +20,10 @@ import badgeIcon from '../../assets/dashboard-new/badge-icon.svg';
 import safety from '../../assets/dashboard-new/safety.svg';
 import safetyIcon from '../../assets/dashboard-new/safety-icon.svg';
 import BottomNavigation from '../../components/navigation/BottomNavigation';
+import useMyRegistrations from '../../hooks/useMyRegistrations';
+import { getMatchedRegistrationCount } from '../../utils/myRegistrationNavigation';
+import { foundItemDetailPath } from '../../utils/foundItemNavigation';
+import { matchingOverviewPath } from '../../components/matching-flow/matchingRoutes';
 
 function getImageUrl(url) {
   if (!url) return placeholder;
@@ -31,7 +35,8 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const [home, setHome] = useState(null);
   const [error, setError] = useState('');
-  const myMatchingCount = home?.count ?? '—';
+  const registrations = useMyRegistrations({ includeStats: false });
+  const myMatchingCount = registrations.isLoading || registrations.error ? '—' : getMatchedRegistrationCount(registrations.items);
   const items = home?.items || [];
 
   useEffect(() => {
@@ -45,9 +50,9 @@ export default function DashboardPage() {
         });
         if (!response.ok) throw new Error('홈 정보를 불러오지 못했습니다.');
         const data = await response.json();
-        if (!Array.isArray(data?.recent_found_items) || !Number.isInteger(data.my_matching_count) || data.my_matching_count < 0) throw new Error('홈 정보 응답을 확인해 주세요.');
-        const recent = data.recent_found_items.slice(0, 3).map((item) => ({ id: item.id, name: item.item_name || '습득물', place: item.found_location || '', image: getImageUrl(item.blurred_image_url), private: item.is_blurred === true }));
-        if (active) setHome({ count: data.my_matching_count, items: recent });
+        if (!Array.isArray(data?.recent_found_items)) throw new Error('홈 정보 응답을 확인해 주세요.');
+        const recent = data.recent_found_items.slice(0, 3).map((item) => ({ id: item.found_item_id ?? item.id, name: item.item_name || '습득물', place: item.found_location || '', image: getImageUrl(item.blurred_image_url), private: item.is_blurred === true }));
+        if (active) setHome({ items: recent });
       } catch (failure) { if (active) setError(failure.message); }
     };
     loadHome();
@@ -82,7 +87,7 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        <Link className="matching-status" to="/matches">
+        <Link className="matching-status" to={matchingOverviewPath}>
           <img className="status-surface" src={statusCard} alt="" />
           <div className="status-copy">
             <div><img className="status-pulse" src={pulse} alt="" /><strong>내 매칭 현황</strong></div>
@@ -90,20 +95,21 @@ export default function DashboardPage() {
           </div>
           <img className="match-count" src={count} alt="" /><b>{myMatchingCount}건</b>
         </Link>
+        {registrations.error && <p role="alert">{registrations.error}</p>}
 
         <section className="recent-items" aria-labelledby="recent-title">
           <div className="recent-heading"><h2 id="recent-title">최근 등록된 분실물</h2><button type="button" onClick={() => navigate('/find')}>전체보기</button></div>
           {(error || !items.length) && <p role={error ? 'alert' : 'status'}>{error || (!home ? '등록된 물건을 불러오고 있어요.' : '아직 등록된 물건이 없어요.')}</p>}
           <div className="item-grid">
             {items.map((item) => (
-              <article className="recent-item" key={item.id || item.name}>
+              <Link className="recent-item" key={item.id || item.name} to={foundItemDetailPath(item.id)} state={{ returnTo: '/home' }} aria-label={item.name + ' 상세 보기'}>
                 <div className="recent-photo">
                   <img className="placeholder" src={placeholder} alt="" />
                   <img className={item.private ? 'item-photo is-private' : 'item-photo'} src={item.image} alt="" />
                   {item.private && <span className="privacy-badge"><img src={badge} alt="" /><em>민감정보 블러</em><img src={badgeIcon} alt="" /></span>}
                 </div>
                 <strong>{item.name}</strong><small>{item.place}</small>
-              </article>
+              </Link>
             ))}
           </div>
         </section>

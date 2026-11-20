@@ -6,6 +6,7 @@ import {
 
 import HomePage from './pages/home/HomePage';
 import FindPage from './pages/find/FindPage';
+import FoundItemDetailPage from './pages/find/FoundItemDetailPage';
 import RegisterPage from './pages/register/RegisterPage';
 import MyPage from './pages/mypage/MyPage';
 import NotifyPage from './pages/notify/NotifyPage';
@@ -23,6 +24,7 @@ import FoundItemRegistrationPage from './pages/found-item/FoundItemRegistrationP
 import FoundAnalyzingPage from './pages/found-analyzing/FoundAnalyzingPage';
 import FoundRegistrationCompletePage from './pages/found-complete/FoundRegistrationCompletePage';
 import MatchingCandidatesPage from './pages/matches/MatchingCandidatesPage';
+import MatchingRegistrationsPage from './pages/matches/MatchingRegistrationsPage';
 import MatchingCandidateDetailPage from './pages/matches/MatchingCandidateDetailPage';
 import OwnershipCheckPage from './pages/ownership/OwnershipCheckPage';
 import ReturnConnectionPage from './pages/return-connection/ReturnConnectionPage';
@@ -40,6 +42,7 @@ function App() {
         <Route path="/" element={<SplashPage />} />
         <Route path="/welcome" element={<HomePage />} />
         <Route path="/find" element={<FindPage />} />
+        <Route path="/found-items/:itemId" element={<FoundItemDetailPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/notify" element={<NotifyPage />} />
@@ -56,6 +59,7 @@ function App() {
         <Route path="/chats/:roomId" element={<ChatRoomPage />} />
         <Route path="/chats/:roomId/complete" element={<ChatReturnCompletePage />} />
         <Route path="/matches" element={<MatchingCandidatesPage />} />
+        <Route path="/my-matches" element={<MatchingRegistrationsPage />} />
         <Route path="/matches/:candidateId" element={<MatchingCandidateDetailPage />} />
         <Route path="/matches/:candidateId/ownership" element={<OwnershipCheckPage />} />
         <Route path="/matches/:candidateId/return" element={<ReturnConnectionPage />} />

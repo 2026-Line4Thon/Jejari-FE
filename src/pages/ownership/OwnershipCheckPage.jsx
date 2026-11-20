@@ -29,7 +29,8 @@ export default function OwnershipCheckPage() {
   useEffect(() => {
     if (status === 'verified') navigate(returnConnectionPath(candidateId, checkId), { replace: true, state: location.state });
   }, [status, candidateId, checkId, navigate, location.state]);
-  const onBack = () => navigate(candidatePath(candidateId), { state: location.state });
-  if (check.isLoading || check.error) return <MatchingLoadState title="소유권 확인" error={check.error} onBack={() => navigate(matchingListPath)} />;
-  return <OwnershipCheckView check={check.data} answer={check.answer} onAnswer={check.setAnswer} onSubmit={check.submit} onSkip={check.skip} onBack={onBack} isPending={check.isPending} error={check.actionError} navigationState={location.state} />;
+  const onBack = () => navigate(candidatePath(candidateId), { replace: true, state: location.state });
+  const onSkip = () => navigate(returnConnectionPath(candidateId, checkId), { state: { ...location.state, ownershipSkipped: true } });
+  if (check.isLoading || check.error) return <MatchingLoadState title="소유권 확인" error={check.error} onBack={onBack} />;
+  return <OwnershipCheckView check={check.data} answer={check.answer} onAnswer={check.setAnswer} onSubmit={check.submit} onSkip={onSkip} onBack={onBack} isPending={check.isPending} error={check.actionError} navigationState={location.state} />;
 }

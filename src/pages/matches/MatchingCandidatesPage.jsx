@@ -4,7 +4,7 @@ import { foundItemService } from '../../services/foundItemService';
 import { matchingService } from '../../services/matchingService';
 import { MatchingLayout, MatchingLoadState, MatchingCandidateCard } from '../../components/matching-flow/MatchingLayout';
 import { matchingAssets } from '../../components/matching-flow/matchingAssets';
-import { candidatePath } from '../../components/matching-flow/matchingRoutes';
+import { candidatePath, matchingOverviewPath } from '../../components/matching-flow/matchingRoutes';
 
 function formatDate(value) {
   if (!value) return '등록 일시 정보 없음';
@@ -101,7 +101,7 @@ export default function MatchingCandidatesPage() {
     return () => { active = false; };
   }, [selectedId]);
 
-  const onBack = () => navigate(location.state?.returnTo === '/mypage' ? '/mypage' : '/home');
+  const onBack = () => navigate(location.state?.returnTo === matchingOverviewPath ? matchingOverviewPath : location.state?.returnTo === '/mypage' ? '/mypage' : '/home');
   if (isLoading || error) return <MatchingLoadState title="매칭 완료" error={error} onBack={onBack} />;
   return <MatchingCandidatesView data={data} onBack={onBack} navigationState={{ ...location.state, lostItemId: data.lostItem.id }} />;
 }

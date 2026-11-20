@@ -1,3 +1,6 @@
+import { matchingService } from './matchingService';
+import { resolveRegistrationState } from '../utils/myRegistrationNavigation';
+
 const API_BASE_URL = 'https://miseno.store';
 
 function getAccessToken() {
@@ -23,23 +26,13 @@ function readList(data, key, label) {
   return { items, total };
 }
 
-function normalizeStatus(status) {
-  const value = String(status || '').toLowerCase();
-  if (value.includes('complete')) return 'completed';
-  if (value.includes('return')) return 'returning';
-  if (value.includes('candidate') || value.includes('match')) return value.includes('ing') ? 'matching' : 'candidates';
-  return 'matching';
-}
-
 function mapRegistration(item, detail = {}) {
   return {
     id: item.id,
     type: String(item.item_type || '').toLowerCase(),
     name: item.item_name || '등록 물품',
     place: detail.place_name || detail.place?.name || item.status_label || '등록한 물품',
-    status: normalizeStatus(detail.status || item.status),
-    candidateCount: Number(detail.candidate_count ?? detail.candidates_count ?? 0),
-    chatId: detail.chat_room_id ?? detail.chat_id ?? null,
+    ...resolveRegistrationState(detail, item),
     photo: { source: item.thumbnail_url || detail.image_url || '', variant: '' },
   };
 }
@@ -47,6 +40,22 @@ function mapRegistration(item, detail = {}) {
 export const myRegistrationService = {
   async getStatus(itemId, type) {
     return getJson(`/users/me/items/${itemId}/status?type=${encodeURIComponent(type)}`);
+  },
+
+  async getProgress(itemId, type, item = {}) {
+    const detail = await this.getStatus(itemId, type);
+    const progress = resolveRegistrationState(detail, item);
+    if (type === 'lost' && ['matching', 'candidates'].includes(progress.status) && !(progress.candidateCount > 0)) {
+      try {
+        const data = await matchingService.getCandidates(itemId);
+        if (Array.isArray(data?.candidates) && (data.lost_item_id == null || String(data.lost_item_id) === String(itemId))) {
+          return { ...detail, candidate_count: data.candidates.length };
+        }
+      } catch {
+        // Keep the status response when the optional candidate lookup fails.
+      }
+    }
+    return detail;
   },
 
   async getOngoing({ includeStats = false } = {}) {
@@ -59,7 +68,7 @@ export const myRegistrationService = {
     const items = [...lost.items, ...found.items];
     const registrations = await Promise.all(items.map(async (item) => {
       try {
-        const detail = await this.getStatus(item.id, String(item.item_type || '').toLowerCase());
+        const detail = await this.getProgress(item.id, String(item.item_type || '').toLowerCase(), item);
         return mapRegistration(item, detail);
       } catch {
         return mapRegistration(item);
