@@ -21,6 +21,12 @@ import safety from '../../assets/dashboard-new/safety.svg';
 import safetyIcon from '../../assets/dashboard-new/safety-icon.svg';
 import BottomNavigation from '../../components/navigation/BottomNavigation';
 
+function getImageUrl(url) {
+  if (!url) return placeholder;
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return `https://miseno.store${url.startsWith('/') ? '' : '/'}${url}`;
+}
+
 export default function DashboardPage() {
   const navigate = useNavigate();
   const [home, setHome] = useState(null);
@@ -40,7 +46,7 @@ export default function DashboardPage() {
         if (!response.ok) throw new Error('홈 정보를 불러오지 못했습니다.');
         const data = await response.json();
         if (!Array.isArray(data?.recent_found_items) || !Number.isInteger(data.my_matching_count) || data.my_matching_count < 0) throw new Error('홈 정보 응답을 확인해 주세요.');
-        const recent = data.recent_found_items.slice(0, 3).map((item) => ({ id: item.id, name: item.item_name || '습득물', place: item.found_location || '', image: item.blurred_image_url || placeholder, private: item.is_blurred === true }));
+        const recent = data.recent_found_items.slice(0, 3).map((item) => ({ id: item.id, name: item.item_name || '습득물', place: item.found_location || '', image: getImageUrl(item.blurred_image_url), private: item.is_blurred === true }));
         if (active) setHome({ count: data.my_matching_count, items: recent });
       } catch (failure) { if (active) setError(failure.message); }
     };
