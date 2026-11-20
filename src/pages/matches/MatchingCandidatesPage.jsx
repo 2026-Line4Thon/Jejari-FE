@@ -58,7 +58,7 @@ export default function MatchingCandidatesPage() {
         if (!accessToken) throw new Error('로그인 후 매칭 후보를 확인할 수 있어요.');
 
         const headers = { Authorization: `Bearer ${accessToken}` };
-        const itemsResponse = await fetch('https://miseno.store/auth/me/items?type=lost', { headers });
+        const itemsResponse = await fetch('https://miseno.store/users/me/items?type=lost', { headers });
         const items = await itemsResponse.json();
         if (!itemsResponse.ok) throw new Error(items.detail || '내 분실물 목록을 불러오지 못했어요.');
 

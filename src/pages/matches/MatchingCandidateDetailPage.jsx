@@ -64,6 +64,7 @@ export default function MatchingCandidateDetailPage() {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
         const responseData = await response.json();
+        if (response.status === 403) throw new Error('등록한 분실물이 없어요.');
         if (!response.ok) throw new Error(responseData.detail || '매칭 후보 정보를 불러오지 못했어요.');
         if (active) setData(mapCandidate(responseData));
       } catch (loadError) {
@@ -77,7 +78,7 @@ export default function MatchingCandidateDetailPage() {
   }, [candidateId]);
 
   const listPath = matchingListPath + (location.state?.lostItemId ? '?itemId=' + location.state.lostItemId : '');
-  const onBack = () => navigate(listPath, { state: location.state });
+  const onBack = () => navigate(-1);
   const onReject = async () => {
     if (busy.current) return;
     busy.current = true; setIsPending(true); setActionError('');
